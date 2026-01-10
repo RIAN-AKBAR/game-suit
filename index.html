@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suit Game - Rock Paper Scissors</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div id="auth-container">
+        <h1>Welcome to Suit Game</h1>
+        <div id="login-form">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button id="login-btn">Login</button>
+            <button id="register-btn">Register</button>
+        </div>
+        <div id="auth-message"></div>
+    </div>
+
+    <div id="game-container" style="display: none;">
+        <header>
+            <h1>Suit Game</h1>
+            <div id="user-info">
+                <span id="user-email"></span>
+                <button id="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <div id="menu">
+            <h2>Choose Game Mode</h2>
+            <div id="mode-selection">
+                <button id="vs-ai-btn">Play vs AI</button>
+                <button id="vs-friend-btn">Play with Friend</button>
+                <button id="join-room-btn">Join Room</button>
+            </div>
+        </div>
+
+        <div id="room-setup" style="display: none;">
+            <h2>Room Setup</h2>
+            <div id="round-selection">
+                <label for="rounds-select">Number of Rounds:</label>
+                <select id="rounds-select">
+                    <option value="3">Best of 3</option>
+                    <option value="4">Best of 4</option>
+                    <option value="5">Best of 5</option>
+                    <option value="6">Best of 6</option>
+                </select>
+            </div>
+            <button id="create-room-btn">Create Room</button>
+            <button id="back-to-menu-btn">Back to Menu</button>
+        </div>
+
+        <div id="join-room-form" style="display: none;">
+            <h2>Join Room</h2>
+            <input type="text" id="join-room-code" placeholder="Enter Room Code" maxlength="8" style="text-transform: uppercase;">
+            <button id="join-room-submit-btn">Join Room</button>
+            <button id="back-to-menu-btn2">Back to Menu</button>
+        </div>
+
+        <div id="game-area" style="display: none;">
+            <div id="room-info" style="display: none;">
+                <p>Room ID: <span id="room-id"></span></p>
+                <p>Share this ID with your friend!</p>
+            </div>
+
+            <div id="choices">
+                <button class="choice-btn" data-choice="rock">🪨 Rock</button>
+                <button class="choice-btn" data-choice="paper">📄 Paper</button>
+                <button class="choice-btn" data-choice="scissors">✂️ Scissors</button>
+            </div>
+
+            <div id="opponent-choice">
+                <p>Opponent is choosing...</p>
+            </div>
+
+            <div id="result" style="display: none;">
+                <h2 id="result-text"></h2>
+                <button id="play-again-btn">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
