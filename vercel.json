@@ -6,10 +6,23 @@
       "use": "@vercel/static"
     }
   ],
+  "builds": [
+    {
+      "src": "style.css",
+      "use": "@vercel/static"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
       "dest": "/index.html"
     }
   ]
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/style.css"
+    }
+  ]
 }
+
