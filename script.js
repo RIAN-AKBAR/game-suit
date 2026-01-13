@@ -59,21 +59,25 @@ let opponentScore = 0;
 
 // ========== HELPER FUNCTIONS ==========
 function showElement(element) {
-    element.style.display = 'block';
+    if (element) element.style.display = 'block';
 }
 
 function hideElement(element) {
-    element.style.display = 'none';
+    if (element) element.style.display = 'none';
 }
 
 function showAuthMessage(message, type = 'info') {
-    authMessage.textContent = message;
-    authMessage.className = `message ${type}`;
+    if (authMessage) {
+        authMessage.textContent = message;
+        authMessage.className = `message ${type}`;
+    }
 }
 
 function showRegisterMessage(message, type = 'info') {
-    registerMessage.textContent = message;
-    registerMessage.className = `message ${type}`;
+    if (registerMessage) {
+        registerMessage.textContent = message;
+        registerMessage.className = `message ${type}`;
+    }
 }
 
 function validateEmail(email) {
@@ -82,14 +86,14 @@ function validateEmail(email) {
 }
 
 function checkPasswordStrength(password) {
-    if (password.length === 0) return '';
+    if (!password) return '';
     if (password.length < 6) return 'weak';
     if (password.length < 8) return 'medium';
     return 'strong';
 }
 
 function updateCoinDisplay() {
-    coinCountSpan.textContent = coins;
+    if (coinCountSpan) coinCountSpan.textContent = coins;
 }
 
 function getChoiceEmoji(choice) {
@@ -102,7 +106,10 @@ function getChoiceEmoji(choice) {
 }
 
 // ========== AUTH FUNCTIONS ==========
-async function loginWithEmail() {
+async function handleLogin(e) {
+    if (e) e.preventDefault();
+    console.log('Login button clicked');
+    
     const email = loginEmailInput.value.trim();
     const password = loginPasswordInput.value;
 
@@ -113,7 +120,7 @@ async function loginWithEmail() {
 
     try {
         loginBtn.disabled = true;
-        loginBtn.innerHTML = 'Logging in...';
+        loginBtn.textContent = 'Logging in...';
         
         const { data, error } = await supabase.auth.signInWithPassword({
             email: email,
@@ -123,7 +130,6 @@ async function loginWithEmail() {
         if (error) throw error;
 
         if (data.user) {
-            // Simpan user data sederhana
             user = {
                 id: data.user.id,
                 email: data.user.email,
@@ -133,21 +139,23 @@ async function loginWithEmail() {
             showGameContainer();
             showAuthMessage('Login successful!', 'success');
             
-            // Auto-hide message
             setTimeout(() => {
-                authMessage.textContent = '';
+                showAuthMessage('', 'success');
             }, 2000);
         }
     } catch (error) {
         console.error('Login error:', error);
-        showAuthMessage('Invalid email or password', 'error');
+        showAuthMessage(error.message || 'Invalid email or password', 'error');
     } finally {
         loginBtn.disabled = false;
-        loginBtn.innerHTML = 'Login';
+        loginBtn.textContent = 'Login';
     }
 }
 
-async function registerWithEmail() {
+async function handleRegister(e) {
+    if (e) e.preventDefault();
+    console.log('Register button clicked');
+    
     const name = registerNameInput.value.trim();
     const email = registerEmailInput.value.trim();
     const password = registerPasswordInput.value;
@@ -170,47 +178,53 @@ async function registerWithEmail() {
 
     try {
         registerBtn.disabled = true;
-        registerBtn.innerHTML = 'Creating account...';
+        registerBtn.textContent = 'Creating account...';
+        
+        console.log('Registering user:', { email, name });
         
         const { data: authData, error: authError } = await supabase.auth.signUp({
             email: email,
             password: password,
             options: {
                 data: {
-                    name: name
+                    name: name,
+                    created_at: new Date().toISOString()
                 }
             }
         });
 
         if (authError) {
-            if (authError.message.includes('already registered')) {
-                throw new Error('Email already registered. Please login.');
+            console.error('Supabase auth error:', authError);
+            if (authError.message.includes('already registered') || authError.code === 'user_already_exists') {
+                throw new Error('This email is already registered. Please login instead.');
             }
             throw authError;
         }
 
-        showRegisterMessage('Registration successful! Please login.', 'success');
+        console.log('Registration successful:', authData);
         
-        // Switch to login form
+        showRegisterMessage('Registration successful! Please login with your credentials.', 'success');
+        
+        // Switch to login form after delay
         setTimeout(() => {
             hideElement(registerForm);
             showElement(loginForm);
             loginEmailInput.value = email;
-            registerMessage.textContent = '';
-            authMessage.textContent = 'Account created! Please login.';
-            authMessage.className = 'message success';
-        }, 1500);
+            showRegisterMessage('', 'success');
+            showAuthMessage('Account created! Please login.', 'success');
+        }, 2000);
 
     } catch (error) {
         console.error('Registration error:', error);
-        showRegisterMessage(error.message || 'Registration failed', 'error');
+        showRegisterMessage(error.message || 'Registration failed. Please try again.', 'error');
     } finally {
         registerBtn.disabled = false;
-        registerBtn.innerHTML = 'Register';
+        registerBtn.textContent = 'Register';
     }
 }
 
-async function signOut() {
+async function signOut(e) {
+    if (e) e.preventDefault();
     try {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
@@ -218,6 +232,7 @@ async function signOut() {
         user = null;
         showAuthContainer();
         resetGame();
+        showAuthMessage('Logged out successfully', 'success');
     } catch (error) {
         console.error('Error signing out:', error);
         alert('Error signing out');
@@ -237,8 +252,8 @@ function showAuthContainer() {
     registerEmailInput.value = '';
     registerPasswordInput.value = '';
     
-    authMessage.textContent = '';
-    registerMessage.textContent = '';
+    showAuthMessage('', 'info');
+    showRegisterMessage('', 'info');
 }
 
 function showGameContainer() {
@@ -246,7 +261,7 @@ function showGameContainer() {
     showElement(gameContainer);
     
     // Set user info
-    if (user) {
+    if (user && userNameSpan) {
         userNameSpan.textContent = user.name || user.email;
     }
     
@@ -339,7 +354,6 @@ function makeChoice(choice) {
         playVsAI();
     } else {
         opponentChoice.textContent = 'Waiting for opponent...';
-        // For multiplayer, simulate opponent choice after delay
         setTimeout(() => {
             const choices = ['rock', 'paper', 'scissors'];
             opponentChoiceValue = choices[Math.floor(Math.random() * 3)];
@@ -352,7 +366,6 @@ function makeChoice(choice) {
 function playVsAI() {
     const aiChoices = ['rock', 'paper', 'scissors'];
     
-    // Show AI thinking animation
     let counter = 0;
     const interval = setInterval(() => {
         const randomChoice = aiChoices[Math.floor(Math.random() * 3)];
@@ -387,7 +400,6 @@ function checkResult() {
         opponentScore++;
     }
 
-    // Check if game is over
     if (currentRound >= totalRounds) {
         let gameResult = '';
         if (playerScore > opponentScore) {
@@ -414,81 +426,50 @@ function checkResult() {
 }
 
 // ========== EVENT LISTENERS ==========
-// Setup semua event listeners
 function setupEventListeners() {
     console.log('Setting up event listeners...');
     
     // Auth event listeners
-    if (loginBtn) {
-        loginBtn.addEventListener('click', loginWithEmail);
-        console.log('Login button listener added');
-    }
+    loginBtn.addEventListener('click', handleLogin);
+    registerBtn.addEventListener('click', handleRegister);
     
-    if (registerBtn) {
-        registerBtn.addEventListener('click', registerWithEmail);
-        console.log('Register button listener added');
-    }
+    showRegisterLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Show register link clicked');
+        hideElement(loginForm);
+        showElement(registerForm);
+        showAuthMessage('');
+    });
     
-    if (showRegisterLink) {
-        showRegisterLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            hideElement(loginForm);
-            showElement(registerForm);
-            authMessage.textContent = '';
-        });
-        console.log('Show register link listener added');
-    }
+    showLoginLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        hideElement(registerForm);
+        showElement(loginForm);
+        showRegisterMessage('');
+    });
     
-    if (showLoginLink) {
-        showLoginLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            hideElement(registerForm);
-            showElement(loginForm);
-            registerMessage.textContent = '';
-        });
-        console.log('Show login link listener added');
-    }
-    
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', signOut);
-    }
+    logoutBtn.addEventListener('click', signOut);
     
     // Game event listeners
-    if (vsAiBtn) {
-        vsAiBtn.addEventListener('click', function() {
-            gameMode = 'ai';
-            startGame('ai');
-        });
-    }
+    vsAiBtn.addEventListener('click', () => {
+        gameMode = 'ai';
+        startGame('ai');
+    });
     
-    if (vsFriendBtn) {
-        vsFriendBtn.addEventListener('click', showRoomSetup);
-    }
+    vsFriendBtn.addEventListener('click', showRoomSetup);
+    joinRoomBtn.addEventListener('click', showJoinRoomForm);
     
-    if (joinRoomBtn) {
-        joinRoomBtn.addEventListener('click', showJoinRoomForm);
-    }
+    createRoomBtn.addEventListener('click', () => {
+        startGame('friend');
+    });
     
-    if (createRoomBtn) {
-        createRoomBtn.addEventListener('click', function() {
-            startGame('friend');
-        });
-    }
+    backToMenuBtn.addEventListener('click', showMenu);
+    backToMenuBtn2.addEventListener('click', showMenu);
     
-    if (backToMenuBtn) {
-        backToMenuBtn.addEventListener('click', showMenu);
-    }
-    
-    if (backToMenuBtn2) {
-        backToMenuBtn2.addEventListener('click', showMenu);
-    }
-    
-    if (joinRoomSubmitBtn) {
-        joinRoomSubmitBtn.addEventListener('click', function() {
-            gameMode = 'join';
-            startGame('join');
-        });
-    }
+    joinRoomSubmitBtn.addEventListener('click', () => {
+        gameMode = 'join';
+        startGame('join');
+    });
     
     // Choice buttons
     choiceBtns.forEach(btn => {
@@ -497,39 +478,29 @@ function setupEventListeners() {
         });
     });
     
-    if (playAgainBtn) {
-        playAgainBtn.addEventListener('click', function() {
-            resetGame();
-            showMenu();
-        });
-    }
+    playAgainBtn.addEventListener('click', function() {
+        resetGame();
+        showMenu();
+    });
     
     // Form input listeners
-    if (registerPasswordInput) {
-        registerPasswordInput.addEventListener('input', function() {
-            const strength = checkPasswordStrength(this.value);
-            if (passwordStrengthIndicator) {
-                passwordStrengthIndicator.className = `password-strength ${strength}`;
-            }
-        });
-    }
+    registerPasswordInput.addEventListener('input', function() {
+        const strength = checkPasswordStrength(this.value);
+        passwordStrengthIndicator.className = `password-strength ${strength}`;
+    });
     
     // Enter key for forms
-    if (loginPasswordInput) {
-        loginPasswordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loginWithEmail();
-            }
-        });
-    }
+    loginPasswordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleLogin();
+        }
+    });
     
-    if (registerPasswordInput) {
-        registerPasswordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                registerWithEmail();
-            }
-        });
-    }
+    registerPasswordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            handleRegister();
+        }
+    });
 }
 
 // ========== INITIALIZATION ==========
