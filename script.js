@@ -1,20 +1,15 @@
-// Supabase configuration - Replace with your actual Supabase project details
-const SUPABASE_URL = 'https://dbkavoetrfxonpkscqvv.supabase.co'; // e.g., 'https://your-project.supabase.co'
-const SUPABASE_ANON_KEY = 'sb_publishable_ODfJQ5yQR9C_FTu792TgaQ_MDApI3gv'; // Your anon key
-
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 // DOM elements
 const authContainer = document.getElementById('auth-container');
-const gameContainer = document.getElementById('game-container');
 const loginForm = document.getElementById('login-form');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const loginBtn = document.getElementById('login-btn');
-const registerBtn = document.getElementById('register-btn');
-const authMessage = document.getElementById('auth-message');
-const userEmail = document.getElementById('user-email');
+const registerForm = document.getElementById('register-form');
+const googleLoginBtn = document.getElementById('google-login-btn');
+const googleRegisterBtn = document.getElementById('google-register-btn');
+const showRegisterLink = document.getElementById('show-register');
+const showLoginLink = document.getElementById('show-login');
+const gameContainer = document.getElementById('game-container');
+const userEmailSpan = document.getElementById('user-email');
 const logoutBtn = document.getElementById('logout-btn');
+const coinCountSpan = document.getElementById('coin-count');
 const menu = document.getElementById('menu');
 const modeSelection = document.getElementById('mode-selection');
 const vsAiBtn = document.getElementById('vs-ai-btn');
@@ -39,67 +34,20 @@ const resultText = document.getElementById('result-text');
 const playAgainBtn = document.getElementById('play-again-btn');
 
 // Game state
-let currentUser = null;
+let user = null;
+let coins = 0;
 let gameMode = null; // 'ai' or 'friend' or 'join'
 let playerChoice = null;
 let opponentChoiceValue = null;
 let roomId = null;
-let channel = null;
 let totalRounds = 3;
 let currentRound = 1;
 let playerScore = 0;
 let opponentScore = 0;
 let isHost = false;
-
-// Authentication functions
-async function login(email, password) {
-    try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password
-        });
-        if (error) throw error;
-        currentUser = data.user;
-        showGame();
-        return { success: true };
-    } catch (error) {
-        return { success: false, message: error.message };
-    }
-}
-
-async function register(email, password) {
-    try {
-        const { data, error } = await supabase.auth.signUp({
-            email: email,
-            password: password
-        });
-        if (error) throw error;
-        return { success: true, message: 'Registration successful! Please check your email to confirm your account.' };
-    } catch (error) {
-        return { success: false, message: error.message };
-    }
-}
-
-async function logout() {
-    await supabase.auth.signOut();
-    currentUser = null;
-    showAuth();
-}
+let gameData = null; // For local multiplayer
 
 // Game functions
-function showAuth() {
-    authContainer.style.display = 'block';
-    gameContainer.style.display = 'none';
-    resetGame();
-}
-
-function showGame() {
-    authContainer.style.display = 'none';
-    gameContainer.style.display = 'block';
-    userEmail.textContent = currentUser.email;
-    showMenu();
-}
-
 function showMenu() {
     menu.style.display = 'block';
     roomSetup.style.display = 'none';
@@ -134,37 +82,64 @@ function resetGame() {
     playerScore = 0;
     opponentScore = 0;
     isHost = false;
-    if (channel) {
-        channel.unsubscribe();
-        channel = null;
-    }
+    gameData = null;
 }
 
 function startGame(mode) {
     gameMode = mode;
     gameArea.style.display = 'block';
-    if (mode === 'friend' || mode === 'join') {
-        startMultiplayerGame();
+
+    if (mode === 'friend') {
+        startLocalMultiplayerGame();
+    } else if (mode === 'join') {
+        joinLocalGame();
     } else {
         // AI mode - no additional setup needed
     }
 }
 
-function startMultiplayerGame() {
+function startLocalMultiplayerGame() {
     roomId = generateRoomId();
     roomIdSpan.textContent = roomId;
     roomInfo.style.display = 'block';
 
-    // Create Supabase realtime channel for the room
-    channel = supabase.channel(`game-${roomId}`);
-    channel
-        .on('broadcast', { event: 'choice' }, ({ payload }) => {
-            if (payload.userId !== currentUser.id) {
-                opponentChoiceValue = payload.choice;
-                checkResult();
-            }
-        })
-        .subscribe();
+    // Create game data for local storage
+    gameData = {
+        roomId: roomId,
+        totalRounds: totalRounds,
+        currentRound: 1,
+        player1Score: 0,
+        player2Score: 0,
+        player1Choice: null,
+        player2Choice: null,
+        gameStarted: true
+    };
+
+    localStorage.setItem(`suit-game-${roomId}`, JSON.stringify(gameData));
+    alert(`Room created! Share this code with your friend: ${roomId}`);
+}
+
+function joinLocalGame() {
+    const roomCode = joinRoomCodeInput.value.trim().toUpperCase();
+    if (!roomCode) {
+        alert('Please enter a room code');
+        return;
+    }
+
+    const storedGame = localStorage.getItem(`suit-game-${roomCode}`);
+    if (!storedGame) {
+        alert('Room not found! Please check the room code.');
+        return;
+    }
+
+    gameData = JSON.parse(storedGame);
+    roomId = roomCode;
+    roomIdSpan.textContent = roomId;
+    roomInfo.style.display = 'block';
+    totalRounds = gameData.totalRounds;
+    currentRound = gameData.currentRound;
+    playerScore = gameData.player2Score || 0;
+    opponentScore = gameData.player1Score || 0;
 }
 
 function generateRoomId() {
@@ -183,21 +158,56 @@ function makeChoice(choice) {
 
     if (gameMode === 'ai') {
         playVsAI();
+    } else if (gameMode === 'friend') {
+        // Player 1 (host) makes choice
+        gameData.player1Choice = choice;
+        localStorage.setItem(`suit-game-${roomId}`, JSON.stringify(gameData));
+        opponentChoice.textContent = 'Waiting for Player 2...';
+        checkLocalGameState();
+    } else if (gameMode === 'join') {
+        // Player 2 (joiner) makes choice
+        gameData.player2Choice = choice;
+        localStorage.setItem(`suit-game-${roomId}`, JSON.stringify(gameData));
+        opponentChoice.textContent = 'Waiting for Player 1...';
+        checkLocalGameState();
+    }
+}
+
+function checkLocalGameState() {
+    // Check if both players have made their choices
+    const currentGameData = JSON.parse(localStorage.getItem(`suit-game-${roomId}`) || '{}');
+
+    if (currentGameData.player1Choice && currentGameData.player2Choice) {
+        // Both players have chosen
+        if (gameMode === 'friend') {
+            opponentChoiceValue = currentGameData.player2Choice;
+        } else {
+            opponentChoiceValue = currentGameData.player1Choice;
+        }
+        checkResult();
     } else {
-        // Send choice to opponent via Supabase channel
-        channel.send({
-            type: 'broadcast',
-            event: 'choice',
-            payload: { userId: currentUser.id, choice: choice }
-        });
-        opponentChoice.textContent = 'Waiting for opponent...';
+        // Poll for opponent's choice
+        setTimeout(checkLocalGameState, 1000);
     }
 }
 
 function playVsAI() {
     const aiChoices = ['rock', 'paper', 'scissors'];
     opponentChoiceValue = aiChoices[Math.floor(Math.random() * 3)];
+
+    // Show changing random choices during the wait
+    let changeCount = 0;
+    const changeInterval = setInterval(() => {
+        const randomChoice = aiChoices[Math.floor(Math.random() * 3)];
+        opponentChoice.textContent = `AI is choosing... ${getChoiceEmoji(randomChoice)}`;
+        changeCount++;
+        if (changeCount >= 5) {
+            clearInterval(changeInterval);
+        }
+    }, 200);
+
     setTimeout(() => {
+        clearInterval(changeInterval);
         opponentChoice.textContent = `AI chose: ${getChoiceEmoji(opponentChoiceValue)}`;
         checkResult();
     }, 1000);
@@ -225,11 +235,25 @@ function checkResult() {
         roundWinner = 'opponent';
     }
 
+    // Update game data for local multiplayer
+    if (gameData) {
+        if (gameMode === 'friend') {
+            gameData.player1Score = playerScore;
+            gameData.player2Score = opponentScore;
+        } else {
+            gameData.player2Score = playerScore;
+            gameData.player1Score = opponentScore;
+        }
+        localStorage.setItem(`suit-game-${roomId}`, JSON.stringify(gameData));
+    }
+
     // Check if game is over
     if (currentRound >= totalRounds) {
         let gameResult = '';
         if (playerScore > opponentScore) {
             gameResult = '🎉 You won the game!';
+            // Award 1 coin for winning
+            updateCoins(coins + 1);
         } else if (opponentScore > playerScore) {
             gameResult = '😞 You lost the game!';
         } else {
@@ -240,6 +264,11 @@ function checkResult() {
     } else {
         resultMessage += `\n\nScore: You ${playerScore} - ${opponentScore} ${gameMode === 'ai' ? 'AI' : 'Opponent'}`;
         playAgainBtn.textContent = 'Next Round';
+        currentRound++;
+        if (gameData) {
+            gameData.currentRound = currentRound;
+            localStorage.setItem(`suit-game-${roomId}`, JSON.stringify(gameData));
+        }
     }
 
     resultText.innerHTML = resultMessage.replace(/\n/g, '<br>');
@@ -255,30 +284,103 @@ function getChoiceEmoji(choice) {
     }
 }
 
+// Auth functions
+async function signInWithGoogle() {
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin
+            }
+        });
+        if (error) throw error;
+    } catch (error) {
+        console.error('Error signing in:', error);
+        alert('Error signing in. Please try again.');
+    }
+}
+
+async function signOut() {
+    try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        user = null;
+        coins = 0;
+        showAuthContainer();
+    } catch (error) {
+        console.error('Error signing out:', error);
+        alert('Error signing out. Please try again.');
+    }
+}
+
+async function loadUserData() {
+    if (!user) return;
+
+    try {
+        const { data, error } = await supabase
+            .from('users')
+            .select('coins')
+            .eq('id', user.id)
+            .single();
+
+        if (error && error.code !== 'PGRST116') throw error; // PGRST116 is "not found"
+
+        if (data) {
+            coins = data.coins;
+        } else {
+            // Create user record if it doesn't exist
+            const { error: insertError } = await supabase
+                .from('users')
+                .insert([{ id: user.id, email: user.email, coins: 0 }]);
+
+            if (insertError) throw insertError;
+            coins = 0;
+        }
+
+        updateCoinDisplay();
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        alert('Error loading user data. Please refresh the page.');
+    }
+}
+
+async function updateCoins(newCoins) {
+    if (!user) return;
+
+    coins = newCoins;
+    updateCoinDisplay();
+
+    try {
+        const { error } = await supabase
+            .from('users')
+            .update({ coins: coins })
+            .eq('id', user.id);
+
+        if (error) throw error;
+    } catch (error) {
+        console.error('Error updating coins:', error);
+        alert('Error saving coins. Please check your connection.');
+    }
+}
+
+function updateCoinDisplay() {
+    coinCountSpan.textContent = coins;
+}
+
+function showAuthContainer() {
+    authContainer.style.display = 'block';
+    gameContainer.style.display = 'none';
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+}
+
+function showGameContainer() {
+    authContainer.style.display = 'none';
+    gameContainer.style.display = 'block';
+    userEmailSpan.textContent = user.email;
+}
+
 // Event listeners
-loginBtn.addEventListener('click', async () => {
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    const result = await login(email, password);
-    if (!result.success) {
-        authMessage.textContent = result.message;
-    }
-});
-
-registerBtn.addEventListener('click', async () => {
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    const result = await register(email, password);
-    authMessage.textContent = result.message;
-    if (result.success) {
-        authMessage.style.color = 'green';
-    } else {
-        authMessage.style.color = 'red';
-    }
-});
-
-logoutBtn.addEventListener('click', logout);
-
 vsAiBtn.addEventListener('click', () => startGame('ai'));
 vsFriendBtn.addEventListener('click', () => showRoomSetup());
 joinRoomBtn.addEventListener('click', () => showJoinRoomForm());
@@ -313,25 +415,36 @@ choiceBtns.forEach(btn => {
     });
 });
 
-playAgainBtn.addEventListener('click', resetGame);
+playAgainBtn.addEventListener('click', () => {
+    resetGame();
+    showMenu();
+});
 
-// Check for existing session on page load
-supabase.auth.getSession().then(({ data: { session } }) => {
+// Auth event listeners
+googleLoginBtn.addEventListener('click', signInWithGoogle);
+googleRegisterBtn.addEventListener('click', signInWithGoogle);
+showRegisterLink.addEventListener('click', () => {
+    loginForm.style.display = 'none';
+    registerForm.style.display = 'block';
+});
+showLoginLink.addEventListener('click', () => {
+    registerForm.style.display = 'none';
+    loginForm.style.display = 'block';
+});
+logoutBtn.addEventListener('click', signOut);
+
+// Initialize auth state
+supabase.auth.onAuthStateChange(async (event, session) => {
     if (session) {
-        currentUser = session.user;
-        showGame();
+        user = session.user;
+        await loadUserData();
+        showGameContainer();
     } else {
-        showAuth();
+        user = null;
+        coins = 0;
+        showAuthContainer();
     }
 });
 
-// Listen for auth state changes
-supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN') {
-        currentUser = session.user;
-        showGame();
-    } else if (event === 'SIGNED_OUT') {
-        currentUser = null;
-        showAuth();
-    }
-});
+// Initialize the game
+showMenu();
