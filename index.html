@@ -23,17 +23,17 @@
                 <input type="password" id="login-password" placeholder="Enter your password" required>
             </div>
             
-            <button id="login-btn">Login</button>
+            <button id="login-btn" class="auth-button">Login</button>
             
             <p id="auth-message" class="message"></p>
             
             <p class="mt-20">
                 Don't have an account? 
-                <span id="show-register" class="auth-link">Register here</span>
+                <a href="#" id="show-register" class="auth-link">Register here</a>
             </p>
         </div>
         
-        <div id="register-form" class="hidden">
+        <div id="register-form" style="display: none;">
             <h2>Register</h2>
             
             <div class="form-group">
@@ -52,23 +52,23 @@
                 <div id="password-strength" class="password-strength"></div>
             </div>
             
-            <button id="register-btn">Register</button>
+            <button id="register-btn" class="auth-button">Register</button>
             
             <p id="register-message" class="message"></p>
             
             <p class="mt-20">
                 Already have an account? 
-                <span id="show-login" class="auth-link">Login here</span>
+                <a href="#" id="show-login" class="auth-link">Login here</a>
             </p>
         </div>
     </div>
 
-    <div id="game-container" class="hidden">
+    <div id="game-container" style="display: none;">
         <header>
             <h1>Suit Game</h1>
             <div id="user-info">
                 <span id="user-name"></span>
-                <button id="logout-btn">Logout</button>
+                <button id="logout-btn" class="game-button">Logout</button>
             </div>
             <div id="coin-display">Coins: <span id="coin-count">0</span></div>
         </header>
@@ -76,13 +76,13 @@
         <div id="menu">
             <h2>Choose Game Mode</h2>
             <div id="mode-selection">
-                <button id="vs-ai-btn">Play vs AI</button>
-                <button id="vs-friend-btn">Play with Friend</button>
-                <button id="join-room-btn">Join Room</button>
+                <button id="vs-ai-btn" class="game-button">Play vs AI</button>
+                <button id="vs-friend-btn" class="game-button">Play with Friend</button>
+                <button id="join-room-btn" class="game-button">Join Room</button>
             </div>
         </div>
 
-        <div id="room-setup" class="hidden">
+        <div id="room-setup" style="display: none;">
             <h2>Room Setup</h2>
             <div id="round-selection">
                 <label for="rounds-select">Number of Rounds:</label>
@@ -93,19 +93,19 @@
                     <option value="6">Best of 6</option>
                 </select>
             </div>
-            <button id="create-room-btn">Create Room</button>
-            <button id="back-to-menu-btn">Back to Menu</button>
+            <button id="create-room-btn" class="game-button">Create Room</button>
+            <button id="back-to-menu-btn" class="game-button">Back to Menu</button>
         </div>
 
-        <div id="join-room-form" class="hidden">
+        <div id="join-room-form" style="display: none;">
             <h2>Join Room</h2>
             <input type="text" id="join-room-code" placeholder="Enter Room Code" maxlength="8" style="text-transform: uppercase;">
-            <button id="join-room-submit-btn">Join Room</button>
-            <button id="back-to-menu-btn2">Back to Menu</button>
+            <button id="join-room-submit-btn" class="game-button">Join Room</button>
+            <button id="back-to-menu-btn2" class="game-button">Back to Menu</button>
         </div>
 
-        <div id="game-area" class="hidden">
-            <div id="room-info" class="hidden">
+        <div id="game-area" style="display: none;">
+            <div id="room-info" style="display: none;">
                 <p>Room ID: <span id="room-id"></span></p>
                 <p>Share this ID with your friend!</p>
             </div>
@@ -120,13 +120,14 @@
                 <p>Opponent is choosing...</p>
             </div>
 
-            <div id="result" class="hidden">
+            <div id="result" style="display: none;">
                 <h2 id="result-text"></h2>
-                <button id="play-again-btn">Play Again</button>
+                <button id="play-again-btn" class="game-button">Play Again</button>
             </div>
         </div>
     </div>
 
+    <!-- Load Supabase JS -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="config.js"></script>
     <script src="script.js"></script>
