@@ -9,37 +9,62 @@
 <body>
     <div id="auth-container">
         <h1>Suit Game</h1>
+        
         <div id="login-form">
             <h2>Login</h2>
+            
             <div class="form-group">
-                <input type="email" id="login-email" placeholder="Email" required>
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" placeholder="Enter your email" required>
             </div>
+            
             <div class="form-group">
-                <input type="password" id="login-password" placeholder="Password" required>
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password" required>
             </div>
+            
             <button id="login-btn">Login</button>
+            
             <p id="auth-message" class="message"></p>
-            <p>Don't have an account? <span id="show-register" class="auth-link">Register here</span></p>
+            
+            <p class="mt-20">
+                Don't have an account? 
+                <span id="show-register" class="auth-link disabled" title="Registration is disabled">Register here</span>
+            </p>
         </div>
         
-        <div id="register-form" style="display: none;">
+        <!-- Register form is hidden and disabled -->
+        <div id="register-form" class="hidden">
             <h2>Register</h2>
+            
             <div class="form-group">
-                <input type="text" id="register-name" placeholder="Name" required>
+                <label for="register-name">Name</label>
+                <input type="text" id="register-name" placeholder="Enter your name" required disabled>
             </div>
+            
             <div class="form-group">
-                <input type="email" id="register-email" placeholder="Email" required>
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" placeholder="Enter your email" required disabled>
             </div>
+            
             <div class="form-group">
-                <input type="password" id="register-password" placeholder="Password (min. 6 characters)" required>
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" placeholder="Minimum 6 characters" required disabled>
             </div>
-            <button id="register-btn">Register</button>
+            
+            <button id="register-btn" disabled>Register</button>
+            
             <p id="register-message" class="message"></p>
-            <p>Already have an account? <span id="show-login" class="auth-link">Login here</span></p>
+            
+            <p class="mt-20">
+                Already have an account? 
+                <span id="show-login" class="auth-link">Login here</span>
+            </p>
         </div>
     </div>
 
-    <div id="game-container" style="display: none;">
+    <!-- Game Container (sama seperti sebelumnya) -->
+    <div id="game-container" class="hidden">
         <header>
             <h1>Suit Game</h1>
             <div id="user-info">
@@ -58,7 +83,7 @@
             </div>
         </div>
 
-        <div id="room-setup" style="display: none;">
+        <div id="room-setup" class="hidden">
             <h2>Room Setup</h2>
             <div id="round-selection">
                 <label for="rounds-select">Number of Rounds:</label>
@@ -73,15 +98,15 @@
             <button id="back-to-menu-btn">Back to Menu</button>
         </div>
 
-        <div id="join-room-form" style="display: none;">
+        <div id="join-room-form" class="hidden">
             <h2>Join Room</h2>
             <input type="text" id="join-room-code" placeholder="Enter Room Code" maxlength="8" style="text-transform: uppercase;">
             <button id="join-room-submit-btn">Join Room</button>
             <button id="back-to-menu-btn2">Back to Menu</button>
         </div>
 
-        <div id="game-area" style="display: none;">
-            <div id="room-info" style="display: none;">
+        <div id="game-area" class="hidden">
+            <div id="room-info" class="hidden">
                 <p>Room ID: <span id="room-id"></span></p>
                 <p>Share this ID with your friend!</p>
             </div>
@@ -96,7 +121,7 @@
                 <p>Opponent is choosing...</p>
             </div>
 
-            <div id="result" style="display: none;">
+            <div id="result" class="hidden">
                 <h2 id="result-text"></h2>
                 <button id="play-again-btn">Play Again</button>
             </div>
