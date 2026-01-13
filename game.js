@@ -234,4 +234,222 @@ function checkResult() {
     let roundResult = '';
 
     if (playerChoice === opponentChoiceValue) {
-        resultMessage = `Round ${currentRound}: 🤝 It
+        resultMessage = `Round ${currentRound}: 🤝 It's a tie!`;
+        roundResult = 'tie';
+    } else if (
+        (playerChoice === 'rock' && opponentChoiceValue === 'scissors') ||
+        (playerChoice === 'paper' && opponentChoiceValue === 'rock') ||
+        (playerChoice === 'scissors' && opponentChoiceValue === 'paper')
+    ) {
+        resultMessage = `Round ${currentRound}: 🎉 You win!`;
+        playerScore++;
+        roundResult = 'win';
+    } else {
+        resultMessage = `Round ${currentRound}: 😞 You lose!`;
+        opponentScore++;
+        roundResult = 'lose';
+    }
+
+    // Update score display
+    if (playerScoreSpan) playerScoreSpan.textContent = playerScore;
+    if (opponentScoreSpan) opponentScoreSpan.textContent = opponentScore;
+
+    // Check if game is over
+    if (currentRound >= totalRounds) {
+        let gameResult = '';
+        let coinsEarned = 0;
+        
+        if (playerScore > opponentScore) {
+            gameResult = '🏆 You won the game!';
+            coinsEarned = gameMode === 'ai' ? 10 : 15;
+            coins += coinsEarned;
+            gamesWon++;
+        } else if (opponentScore > playerScore) {
+            gameResult = '😔 You lost the game!';
+        } else {
+            gameResult = '🤝 The game is a tie!';
+            coinsEarned = 5;
+            coins += coinsEarned;
+            gamesTied++;
+        }
+        
+        resultMessage += `<br><br><strong>Final Score:</strong><br>You: ${playerScore} - ${opponentScore}: ${gameMode === 'ai' ? 'AI' : 'Opponent'}<br><br>${gameResult}`;
+        
+        if (coinsEarned > 0) {
+            resultMessage += `<br><br>💰 +${coinsEarned} coins!`;
+        }
+        
+        if (playAgainBtn) playAgainBtn.textContent = '🔄 Play Again';
+        updateUserDisplay();
+    } else {
+        resultMessage += `<br><br><strong>Current Score:</strong><br>You: ${playerScore} - ${opponentScore}: ${gameMode === 'ai' ? 'AI' : 'Opponent'}`;
+        currentRound++;
+        if (currentRoundSpan) currentRoundSpan.textContent = currentRound;
+        if (playAgainBtn) playAgainBtn.textContent = '⏭️ Next Round';
+    }
+
+    if (resultText) resultText.innerHTML = resultMessage;
+    if (resultDiv) resultDiv.style.display = 'block';
+}
+
+// ========== AUTH FUNCTIONS ==========
+async function signOut() {
+    try {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+        
+        // Redirect to login page
+        window.location.href = 'index.html';
+    } catch (error) {
+        console.error('Error signing out:', error);
+        alert('Error signing out. Please try again.');
+    }
+}
+
+async function loadUserData() {
+    try {
+        const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+        
+        if (supabaseUser) {
+            user = {
+                id: supabaseUser.id,
+                email: supabaseUser.email,
+                name: supabaseUser.user_metadata?.name || 'Player'
+            };
+            
+            // Load user stats from localStorage
+            const savedCoins = localStorage.getItem(`coins_${user.id}`);
+            const savedWins = localStorage.getItem(`wins_${user.id}`);
+            const savedTies = localStorage.getItem(`ties_${user.id}`);
+            
+            coins = savedCoins ? parseInt(savedCoins) : 100;
+            gamesWon = savedWins ? parseInt(savedWins) : 0;
+            gamesTied = savedTies ? parseInt(savedTies) : 0;
+            
+            updateUserDisplay();
+        } else {
+            // No user logged in, redirect to login
+            window.location.href = 'index.html';
+        }
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        window.location.href = 'index.html';
+    }
+}
+
+function saveUserStats() {
+    if (!user) return;
+    
+    localStorage.setItem(`coins_${user.id}`, coins.toString());
+    localStorage.setItem(`wins_${user.id}`, gamesWon.toString());
+    localStorage.setItem(`ties_${user.id}`, gamesTied.toString());
+}
+
+// ========== EVENT LISTENERS ==========
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Game page loaded');
+    
+    // Load user data
+    loadUserData();
+    
+    // Event listeners for game mode buttons
+    if (vsAiBtn) {
+        vsAiBtn.addEventListener('click', () => {
+            gameMode = 'ai';
+            startGame('ai');
+        });
+    }
+    
+    if (vsFriendBtn) {
+        vsFriendBtn.addEventListener('click', () => {
+            showSection('room-setup');
+        });
+    }
+    
+    if (joinRoomBtn) {
+        joinRoomBtn.addEventListener('click', () => {
+            showSection('join-room-form');
+        });
+    }
+    
+    // Room setup
+    if (createRoomBtn) {
+        createRoomBtn.addEventListener('click', () => {
+            startGame('friend');
+        });
+    }
+    
+    if (backToMenuBtn) {
+        backToMenuBtn.addEventListener('click', () => {
+            showSection('menu');
+        });
+    }
+    
+    // Join room
+    if (joinRoomSubmitBtn) {
+        joinRoomSubmitBtn.addEventListener('click', () => {
+            startGame('join');
+        });
+    }
+    
+    if (backToMenuBtn2) {
+        backToMenuBtn2.addEventListener('click', () => {
+            showSection('menu');
+        });
+    }
+    
+    // Quick join buttons
+    quickRoomBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const roomCode = this.getAttribute('data-code');
+            if (joinRoomCodeInput) {
+                joinRoomCodeInput.value = roomCode;
+                startGame('join');
+            }
+        });
+    });
+    
+    // Choice buttons
+    choiceBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const choice = this.getAttribute('data-choice');
+            makeChoice(choice);
+        });
+    });
+    
+    // Game controls
+    if (playAgainBtn) {
+        playAgainBtn.addEventListener('click', function() {
+            if (currentRound > totalRounds) {
+                // Game over, start new game
+                resetGame();
+                showSection('menu');
+            } else {
+                // Next round
+                resetGame();
+                resultDiv.style.display = 'none';
+                opponentChoiceDiv.innerHTML = `
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Waiting for opponent's choice...</p>
+                `;
+            }
+        });
+    }
+    
+    if (backToMenuFromGameBtn) {
+        backToMenuFromGameBtn.addEventListener('click', () => {
+            showSection('menu');
+        });
+    }
+    
+    // Logout
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', signOut);
+    }
+    
+    // Save stats before page unload
+    window.addEventListener('beforeunload', saveUserStats);
+});
+
+// Make functions available globally
+window.copyRoomId = copyRoomId;
