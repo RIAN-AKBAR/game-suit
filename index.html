@@ -8,8 +8,9 @@
 </head>
 <body>
     <div id="auth-container">
-        <h1>Suit Game</h1>
+        <h1>🎮 Suit Game</h1>
         
+        <!-- Login Form -->
         <div id="login-form">
             <h2>Login</h2>
             
@@ -25,7 +26,7 @@
             
             <button id="login-btn" class="auth-button">Login</button>
             
-            <p id="auth-message" class="message"></p>
+            <div id="auth-message" class="message"></div>
             
             <p class="mt-20">
                 Don't have an account? 
@@ -33,6 +34,7 @@
             </p>
         </div>
         
+        <!-- Register Form -->
         <div id="register-form" style="display: none;">
             <h2>Register</h2>
             
@@ -52,9 +54,9 @@
                 <div id="password-strength" class="password-strength"></div>
             </div>
             
-            <button id="register-btn" class="auth-button">Register</button>
+            <button id="register-btn" class="auth-button">Create Account</button>
             
-            <p id="register-message" class="message"></p>
+            <div id="register-message" class="message"></div>
             
             <p class="mt-20">
                 Already have an account? 
@@ -63,27 +65,30 @@
         </div>
     </div>
 
+    <!-- Game Container -->
     <div id="game-container" style="display: none;">
         <header>
-            <h1>Suit Game</h1>
+            <h1>🎮 Suit Game</h1>
             <div id="user-info">
                 <span id="user-name"></span>
                 <button id="logout-btn" class="game-button">Logout</button>
             </div>
-            <div id="coin-display">Coins: <span id="coin-count">0</span></div>
+            <div id="coin-display">💰 Coins: <span id="coin-count">100</span></div>
         </header>
 
+        <!-- Main Menu -->
         <div id="menu">
             <h2>Choose Game Mode</h2>
             <div id="mode-selection">
-                <button id="vs-ai-btn" class="game-button">Play vs AI</button>
-                <button id="vs-friend-btn" class="game-button">Play with Friend</button>
-                <button id="join-room-btn" class="game-button">Join Room</button>
+                <button id="vs-ai-btn" class="game-button">🤖 Play vs AI</button>
+                <button id="vs-friend-btn" class="game-button">👥 Play with Friend</button>
+                <button id="join-room-btn" class="game-button">🔗 Join Room</button>
             </div>
         </div>
 
+        <!-- Room Setup -->
         <div id="room-setup" style="display: none;">
-            <h2>Room Setup</h2>
+            <h2>Create Room</h2>
             <div id="round-selection">
                 <label for="rounds-select">Number of Rounds:</label>
                 <select id="rounds-select">
@@ -93,20 +98,22 @@
                     <option value="6">Best of 6</option>
                 </select>
             </div>
-            <button id="create-room-btn" class="game-button">Create Room</button>
-            <button id="back-to-menu-btn" class="game-button">Back to Menu</button>
+            <button id="create-room-btn" class="game-button">🎮 Create Room</button>
+            <button id="back-to-menu-btn" class="game-button secondary">← Back to Menu</button>
         </div>
 
+        <!-- Join Room -->
         <div id="join-room-form" style="display: none;">
             <h2>Join Room</h2>
             <input type="text" id="join-room-code" placeholder="Enter Room Code" maxlength="8" style="text-transform: uppercase;">
-            <button id="join-room-submit-btn" class="game-button">Join Room</button>
-            <button id="back-to-menu-btn2" class="game-button">Back to Menu</button>
+            <button id="join-room-submit-btn" class="game-button">🎯 Join Room</button>
+            <button id="back-to-menu-btn2" class="game-button secondary">← Back to Menu</button>
         </div>
 
+        <!-- Game Area -->
         <div id="game-area" style="display: none;">
             <div id="room-info" style="display: none;">
-                <p>Room ID: <span id="room-id"></span></p>
+                <p>Room ID: <span id="room-id" class="room-code"></span></p>
                 <p>Share this ID with your friend!</p>
             </div>
 
@@ -122,7 +129,7 @@
 
             <div id="result" style="display: none;">
                 <h2 id="result-text"></h2>
-                <button id="play-again-btn" class="game-button">Play Again</button>
+                <button id="play-again-btn" class="game-button">🔄 Play Again</button>
             </div>
         </div>
     </div>
