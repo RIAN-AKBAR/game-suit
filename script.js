@@ -147,7 +147,7 @@ async function handleLogin(e) {
         console.error('Login error:', error);
         showAuthMessage(error.message || 'Invalid email or password', 'error');
     } finally {
-        loginBtn.disabled = false;
+        loginBtn.disabled = true;
         loginBtn.textContent = 'Login';
     }
 }
@@ -300,7 +300,7 @@ function resetGame() {
     
     choiceBtns.forEach(btn => {
         btn.classList.remove('selected');
-        btn.disabled = false;
+        btn.disabled = true;
     });
     
     playerChoice = null;
@@ -555,3 +555,4 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, starting app...');
     initializeApp();
 });
+
