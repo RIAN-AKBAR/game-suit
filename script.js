@@ -1,3 +1,6 @@
+// Initialize Supabase client
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 // DOM elements
 const authContainer = document.getElementById('auth-container');
 const loginForm = document.getElementById('login-form');
@@ -286,14 +289,18 @@ function getChoiceEmoji(choice) {
 
 // Auth functions
 async function signInWithGoogle() {
+    console.log('Sign in with Google clicked');
     try {
+        console.log('Attempting to sign in with Google...');
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
                 redirectTo: window.location.origin
             }
         });
+        console.log('OAuth response:', { data, error });
         if (error) throw error;
+        console.log('Sign in initiated successfully');
     } catch (error) {
         console.error('Error signing in:', error);
         alert('Error signing in. Please try again.');
