@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suit Game - Play Now</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="header-left">
+                <h1><i class="fas fa-gamepad"></i> Suit Game</h1>
+                <div class="user-greeting">
+                    Hello, <span id="user-name">Player</span>!
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <div class="coin-display">
+                    <i class="fas fa-coins"></i>
+                    <span id="coin-count">100</span> coins
+                </div>
+                <button id="logout-btn" class="logout-button">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="game-main">
+            <!-- Menu Utama -->
+            <div id="menu" class="game-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-play-circle"></i> Choose Game Mode</h2>
+                    <p class="section-subtitle">Select how you want to play</p>
+                </div>
+                
+                <div class="game-modes">
+                    <div class="game-mode-card" id="vs-ai-btn">
+                        <div class="mode-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3>Play vs AI</h3>
+                        <p>Challenge our smart AI opponent</p>
+                        <div class="mode-reward">
+                            <i class="fas fa-coins"></i> Win: +10 coins
+                        </div>
+                        <button class="mode-button">
+                            <i class="fas fa-play"></i> Play Now
+                        </button>
+                    </div>
+                    
+                    <div class="game-mode-card" id="vs-friend-btn">
+                        <div class="mode-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Play with Friend</h3>
+                        <p>Create a room and invite friends</p>
+                        <div class="mode-reward">
+                            <i class="fas fa-coins"></i> Win: +15 coins
+                        </div>
+                        <button class="mode-button">
+                            <i class="fas fa-plus-circle"></i> Create Room
+                        </button>
+                    </div>
+                    
+                    <div class="game-mode-card" id="join-room-btn">
+                        <div class="mode-icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <h3>Join Room</h3>
+                        <p>Join an existing game room</p>
+                        <div class="mode-reward">
+                            <i class="fas fa-coins"></i> Win: +15 coins
+                        </div>
+                        <button class="mode-button">
+                            <i class="fas fa-door-open"></i> Join Game
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="stats-section">
+                    <h3><i class="fas fa-chart-line"></i> Your Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-trophy"></i>
+                            <div class="stat-value" id="games-won">0</div>
+                            <div class="stat-label">Games Won</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-handshake"></i>
+                            <div class="stat-value" id="games-tied">0</div>
+                            <div class="stat-label">Games Tied</div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-coins"></i>
+                            <div class="stat-value" id="total-coins">100</div>
+                            <div class="stat-label">Total Coins</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Room Setup -->
+            <div id="room-setup" class="game-section" style="display: none;">
+                <div class="section-header">
+                    <h2><i class="fas fa-cogs"></i> Room Setup</h2>
+                    <button id="back-to-menu" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Back to Menu
+                    </button>
+                </div>
+                
+                <div class="setup-content">
+                    <div class="setup-card">
+                        <div class="setup-icon">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+                        
+                        <div class="setup-group">
+                            <label for="rounds-select">
+                                <i class="fas fa-flag-checkered"></i> Number of Rounds
+                            </label>
+                            <select id="rounds-select" class="rounds-select">
+                                <option value="3">Best of 3 (Quick Game)</option>
+                                <option value="5" selected>Best of 5 (Standard)</option>
+                                <option value="7">Best of 7 (Long Game)</option>
+                                <option value="9">Best of 9 (Marathon)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setup-group">
+                            <label for="room-password">
+                                <i class="fas fa-key"></i> Room Password (Optional)
+                            </label>
+                            <input type="password" id="room-password" placeholder="Leave empty for public room">
+                        </div>
+                        
+                        <button id="create-room-btn" class="create-room-button">
+                            <i class="fas fa-plus-circle"></i> Create Room
+                        </button>
+                    </div>
+                    
+                    <div class="instructions">
+                        <h3><i class="fas fa-info-circle"></i> How to Play with Friends</h3>
+                        <ol class="instructions-list">
+                            <li>Create a room with your preferred settings</li>
+                            <li>Share the Room ID with your friend</li>
+                            <li>Your friend joins using the Room ID</li>
+                            <li>Both players make their choices</li>
+                            <li>Winner gets coins!</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Join Room -->
+            <div id="join-room-form" class="game-section" style="display: none;">
+                <div class="section-header">
+                    <h2><i class="fas fa-door-open"></i> Join Room</h2>
+                    <button id="back-to-menu2" class="back-button">
+                        <i class="fas fa-arrow-left"></i> Back to Menu
+                    </button>
+                </div>
+                
+                <div class="join-content">
+                    <div class="join-card">
+                        <div class="join-icon">
+                            <i class="fas fa-keyboard"></i>
+                        </div>
+                        
+                        <div class="join-group">
+                            <label for="join-room-code">
+                                <i class="fas fa-hashtag"></i> Room Code
+                            </label>
+                            <input type="text" id="join-room-code" 
+                                   placeholder="Enter 6-digit code" 
+                                   maxlength="6" 
+                                   style="text-transform: uppercase;"
+                                   class="room-code-input">
+                            <div class="input-hint">Example: ABC123</div>
+                        </div>
+                        
+                        <div class="join-group">
+                            <label for="join-password">
+                                <i class="fas fa-key"></i> Room Password
+                            </label>
+                            <input type="password" id="join-password" 
+                                   placeholder="If room has password">
+                        </div>
+                        
+                        <button id="join-room-submit-btn" class="join-button">
+                            <i class="fas fa-sign-in-alt"></i> Join Room
+                        </button>
+                    </div>
+                    
+                    <div class="quick-join">
+                        <h3><i class="fas fa-bolt"></i> Quick Join</h3>
+                        <div class="quick-rooms">
+                            <button class="quick-room-btn" data-code="PUBLIC">
+                                <i class="fas fa-globe"></i> Public Room
+                            </button>
+                            <button class="quick-room-btn" data-code="FUN123">
+                                <i class="fas fa-smile"></i> Fun Room
+                            </button>
+                            <button class="quick-room-btn" data-code="BETA99">
+                                <i class="fas fa-flask"></i> Beta Room
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Area -->
+            <div id="game-area" class="game-section" style="display: none;">
+                <div class="game-header-info">
+                    <div class="room-info" id="room-info" style="display: none;">
+                        <div class="room-id-display">
+                            <i class="fas fa-door-closed"></i>
+                            Room: <span id="room-id" class="room-code">ABC123</span>
+                            <button class="copy-room-btn" onclick="copyRoomId()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <p class="room-share">Share this code with your friend!</p>
+                    </div>
+                    
+                    <div class="game-score">
+                        <div class="score-player">
+                            <i class="fas fa-user"></i> You: <span id="player-score">0</span>
+                        </div>
+                        <div class="score-vs">VS</div>
+                        <div class="score-opponent">
+                            <i class="fas fa-user-friends"></i> Opponent: <span id="opponent-score">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="round-info">
+                        Round <span id="current-round">1</span> of <span id="total-rounds">5</span>
+                    </div>
+                </div>
+                
+                <div class="game-choices">
+                    <h3><i class="fas fa-hand-scissors"></i> Make Your Choice</h3>
+                    <div class="choices-grid">
+                        <button class="choice-btn big" data-choice="rock">
+                            <div class="choice-icon">🪨</div>
+                            <div class="choice-name">Rock</div>
+                            <div class="choice-desc">Smashes scissors</div>
+                        </button>
+                        
+                        <button class="choice-btn big" data-choice="paper">
+                            <div class="choice-icon">📄</div>
+                            <div class="choice-name">Paper</div>
+                            <div class="choice-desc">Covers rock</div>
+                        </button>
+                        
+                        <button class="choice-btn big" data-choice="scissors">
+                            <div class="choice-icon">✂️</div>
+                            <div class="choice-name">Scissors</div>
+                            <div class="choice-desc">Cuts paper</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="opponent-section">
+                    <div class="opponent-waiting" id="opponent-choice">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Waiting for opponent's choice...</p>
+                    </div>
+                </div>
+                
+                <div class="result-section" id="result" style="display: none;">
+                    <div class="result-card">
+                        <h2 id="result-text"></h2>
+                        <div class="result-actions">
+                            <button id="play-again-btn" class="play-again-button">
+                                <i class="fas fa-redo"></i> Play Again
+                            </button>
+                            <button id="back-to-menu-from-game" class="back-button">
+                                <i class="fas fa-home"></i> Main Menu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="game-footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+                    <a href="#"><i class="fas fa-star"></i> Rate Game</a>
+                    <a href="#"><i class="fas fa-share-alt"></i> Share</a>
+                </div>
+                <div class="footer-copyright">
+                    © 2024 Suit Game - Rock Paper Scissors Online
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
