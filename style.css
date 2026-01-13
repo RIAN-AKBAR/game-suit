@@ -103,6 +103,41 @@ body {
     color: #999;
 }
 
+/* Password strength indicator */
+.password-strength {
+    height: 5px;
+    margin-top: 5px;
+    border-radius: 3px;
+    background: #eee;
+    overflow: hidden;
+    position: relative;
+}
+
+.password-strength::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.password-strength.weak::after {
+    width: 33%;
+    background: #ff6b6b;
+}
+
+.password-strength.medium::after {
+    width: 66%;
+    background: #ffa726;
+}
+
+.password-strength.strong::after {
+    width: 100%;
+    background: #4CAF50;
+}
+
 /* Button styles */
 #login-btn, #register-btn {
     width: 100%;
@@ -120,24 +155,18 @@ body {
     overflow: hidden;
 }
 
-#login-btn:hover, #register-btn:hover {
+#login-btn:hover:not(:disabled), #register-btn:hover:not(:disabled) {
     transform: translateY(-3px);
     box-shadow: 0 7px 20px rgba(102, 126, 234, 0.4);
 }
 
-#login-btn:active, #register-btn:active {
+#login-btn:active:not(:disabled), #register-btn:active:not(:disabled) {
     transform: translateY(-1px);
 }
 
-/* Disabled button style */
-#register-btn:disabled {
-    background: linear-gradient(135deg, #cccccc 0%, #999999 100%);
+#login-btn:disabled, #register-btn:disabled {
+    opacity: 0.7;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-#register-btn:disabled:hover {
     transform: none;
     box-shadow: none;
 }
@@ -199,21 +228,6 @@ body {
 
 .auth-link:hover::after {
     width: 100%;
-}
-
-/* Disabled link style */
-.auth-link.disabled {
-    color: #999;
-    cursor: not-allowed;
-    text-decoration: none;
-}
-
-.auth-link.disabled:hover {
-    color: #999;
-}
-
-.auth-link.disabled::after {
-    display: none;
 }
 
 /* ========== GAME CONTAINER ========== */
@@ -593,8 +607,21 @@ header h1 {
     border-radius: 50%;
     border-top-color: #fff;
     animation: spin 1s ease-in-out infinite;
+    margin-right: 10px;
+    vertical-align: middle;
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+/* Success animation */
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.message.success {
+    animation: successPulse 0.5s ease-in-out;
 }
