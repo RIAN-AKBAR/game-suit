@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Hub - Multi Games Collection</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-gamepad"></i>
+                <span>GameHub</span>
+            </div>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link active">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="games.html" class="nav-link">
+                    <i class="fas fa-gamepad"></i> Games
+                </a>
+                <a href="tutorial.html" class="nav-link">
+                    <i class="fas fa-graduation-cap"></i> Tutorial
+                </a>
+            </div>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Welcome to GameHub</span>
+                    <br>Your Ultimate Gaming Experience
+                </h1>
+                <p class="hero-subtitle">
+                    Play 4 exciting games in one place! Challenge your friends, 
+                    test your skills, and have endless fun with our collection 
+                    of classic and modern games.
+                </p>
+                <div class="hero-buttons">
+                    <a href="games.html" class="btn btn-primary">
+                        <i class="fas fa-play-circle"></i> Start Playing
+                    </a>
+                    <a href="tutorial.html" class="btn btn-secondary">
+                        <i class="fas fa-graduation-cap"></i> Learn How to Play
+                    </a>
+                </div>
+            </div>
+            <div class="hero-illustration">
+                <div class="floating-games">
+                    <div class="game-icon" style="animation-delay: 0s">
+                        <i class="fas fa-hand-scissors"></i>
+                    </div>
+                    <div class="game-icon" style="animation-delay: 0.2s">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <div class="game-icon" style="animation-delay: 0.4s">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="game-icon" style="animation-delay: 0.6s">
+                        <i class="fas fa-snake"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose GameHub?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Instant Play</h3>
+                    <p>No registration needed. Start playing immediately with zero setup.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Play on any device - desktop, tablet, or mobile phone.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Challenge System</h3>
+                    <p>Compete against AI and track your scores across all games.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Beautiful UI</h3>
+                    <p>Enjoy a stunning, modern interface with smooth animations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Games Preview -->
+    <section class="games-preview">
+        <div class="container">
+            <h2 class="section-title">Our Game Collection</h2>
+            <div class="games-grid">
+                <div class="game-card" data-game="rock-paper-scissors">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-hand-scissors"></i>
+                        </div>
+                        <span class="game-badge">Classic</span>
+                    </div>
+                    <div class="game-card-body">
+                        <h3>Rock Paper Scissors</h3>
+                        <p>The classic hand game with modern twist. Challenge AI or play with friends.</p>
+                        <div class="game-stats">
+                            <div class="stat">
+                                <i class="fas fa-users"></i>
+                                <span>1-2 Players</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-clock"></i>
+                                <span>Quick Play</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="games.html#rps" class="btn-play">
+                            <i class="fas fa-play"></i> Play Now
+                        </a>
+                    </div>
+                </div>
+
+                <div class="game-card" data-game="tic-tac-toe">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <span class="game-badge">Strategy</span>
+                    </div>
+                    <div class="game-card-body">
+                        <h3>Tic Tac Toe</h3>
+                        <p>Strategic 3x3 grid game. Outsmart your opponent in this battle of X's and O's.</p>
+                        <div class="game-stats">
+                            <div class="stat">
+                                <i class="fas fa-users"></i>
+                                <span>2 Players</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-brain"></i>
+                                <span>Strategic</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="games.html#ttt" class="btn-play">
+                            <i class="fas fa-play"></i> Play Now
+                        </a>
+                    </div>
+                </div>
+
+                <div class="game-card" data-game="memory-game">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <span class="game-badge">Memory</span>
+                    </div>
+                    <div class="game-card-body">
+                        <h3>Memory Match</h3>
+                        <p>Test your memory with card matching. Find all pairs in the shortest time!</p>
+                        <div class="game-stats">
+                            <div class="stat">
+                                <i class="fas fa-user"></i>
+                                <span>1 Player</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-memory"></i>
+                                <span>Memory</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="games.html#memory" class="btn-play">
+                            <i class="fas fa-play"></i> Play Now
+                        </a>
+                    </div>
+                </div>
+
+                <div class="game-card" data-game="snake">
+                    <div class="game-card-header">
+                        <div class="game-icon">
+                            <i class="fas fa-snake"></i>
+                        </div>
+                        <span class="game-badge">Arcade</span>
+                    </div>
+                    <div class="game-card-body">
+                        <h3>Snake Game</h3>
+                        <p>Classic arcade snake. Grow longer without hitting walls or yourself!</p>
+                        <div class="game-stats">
+                            <div class="stat">
+                                <i class="fas fa-user"></i>
+                                <span>1 Player</span>
+                            </div>
+                            <div class="stat">
+                                <i class="fas fa-fire"></i>
+                                <span>Fast-Paced</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="games.html#snake" class="btn-play">
+                            <i class="fas fa-play"></i> Play Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <h2 class="section-title">About GameHub</h2>
+                <p class="about-text">
+                    GameHub is a collection of classic games reimagined for the modern web. 
+                    Our mission is to provide instant entertainment without the need for registration 
+                    or downloads. All games are built with pure HTML, CSS, and JavaScript - no frameworks, 
+                    no databases, just pure fun!
+                </p>
+                <div class="about-features">
+                    <div class="about-feature">
+                        <i class="fas fa-code"></i>
+                        <h4>Built with Pure Code</h4>
+                        <p>No frameworks or libraries. Pure vanilla JavaScript for optimal performance.</p>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-crosshairs"></i>
+                        <h4>Focus on Gameplay</h4>
+                        <p>Simple controls, intuitive interface, and engaging mechanics.</p>
+                    </div>
+                    <div class="about-feature">
+                        <i class="fas fa-heart"></i>
+                        <h4>Made with Passion</h4>
+                        <p>Crafted with attention to detail and love for classic gaming.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-gamepad"></i>
+                    <span>GameHub</span>
+                </div>
+                <div class="footer-links">
+                    <a href="index.html">Home</a>
+                    <a href="games.html">Games</a>
+                    <a href="tutorial.html">Tutorial</a>
+                </div>
+                <div class="footer-social">
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <i class="fab fa-discord"></i>
+                    </a>
+                </div>
+                <div class="footer-copyright">
+                    <p>© 2026 GameHub - Multi Games Collection</p>
+                    <p class="creator">Created with ❤️ by <strong>Muhammad Rian Akbar</strong></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
