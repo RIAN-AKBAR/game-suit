@@ -2,6 +2,9 @@
 let currentTheme = 'light';
 let totalWins = parseInt(localStorage.getItem('totalWins')) || 0;
 let totalGames = parseInt(localStorage.getItem('totalGames')) || 0;
+let currentRoom = null;
+let isHost = false;
+let socket = null;
 
 // ========== THEME MANAGEMENT ==========
 function initTheme() {
@@ -66,6 +69,9 @@ function initNavigation() {
             
             // Reset current game if needed
             resetCurrentGame();
+            
+            // Show/hide multiplayer options based on game
+            updateMultiplayerUI(gameId);
         });
     });
     
@@ -92,6 +98,35 @@ function initNavigation() {
     });
 }
 
+function updateMultiplayerUI(gameId) {
+    const multiplayerSection = document.getElementById('multiplayerSection');
+    const rpsMultiplayerOptions = document.getElementById('rpsMultiplayerOptions');
+    const tttMultiplayerOptions = document.getElementById('tttMultiplayerOptions');
+    
+    if (!multiplayerSection) return;
+    
+    // Reset all options
+    if (rpsMultiplayerOptions) rpsMultiplayerOptions.classList.add('hidden');
+    if (tttMultiplayerOptions) tttMultiplayerOptions.classList.add('hidden');
+    
+    // Show relevant multiplayer options
+    switch(gameId) {
+        case 'rps':
+            if (rpsMultiplayerOptions) rpsMultiplayerOptions.classList.remove('hidden');
+            break;
+        case 'ttt':
+            if (tttMultiplayerOptions) tttMultiplayerOptions.classList.remove('hidden');
+            break;
+        default:
+            // Hide multiplayer section for non-multiplayer games
+            multiplayerSection.classList.add('hidden');
+            return;
+    }
+    
+    // Show multiplayer section for multiplayer games
+    multiplayerSection.classList.remove('hidden');
+}
+
 // ========== DASHBOARD STATS ==========
 function updateDashboardStats() {
     const winRate = totalGames > 0 ? Math.round((totalWins / totalGames) * 100) : 0;
@@ -114,6 +149,143 @@ function saveGameResult(isWin) {
     updateDashboardStats();
 }
 
+// ========== MULTIPLAYER SYSTEM ==========
+function initMultiplayer() {
+    const createRoomBtn = document.getElementById('createRoomBtn');
+    const joinRoomBtn = document.getElementById('joinRoomBtn');
+    const joinRoomInput = document.getElementById('joinRoomInput');
+    
+    if (createRoomBtn) {
+        createRoomBtn.addEventListener('click', createRoom);
+    }
+    
+    if (joinRoomBtn && joinRoomInput) {
+        joinRoomBtn.addEventListener('click', () => {
+            const roomCode = joinRoomInput.value.trim();
+            if (roomCode) joinRoom(roomCode);
+        });
+        
+        // Allow pressing Enter to join room
+        joinRoomInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const roomCode = joinRoomInput.value.trim();
+                if (roomCode) joinRoom(roomCode);
+            }
+        });
+    }
+    
+    // Initialize mock WebSocket (for demo purposes)
+    initMockWebSocket();
+}
+
+function initMockWebSocket() {
+    // Mock WebSocket for demo
+    socket = {
+        send: function(data) {
+            console.log('Mock WebSocket send:', data);
+            // Simulate receiving data
+            setTimeout(() => {
+                handleMockMessage(data);
+            }, 100);
+        },
+        close: function() {
+            console.log('Mock WebSocket closed');
+        }
+    };
+}
+
+function handleMockMessage(data) {
+    try {
+        const message = typeof data === 'string' ? JSON.parse(data) : data;
+        
+        switch(message.type) {
+            case 'room_created':
+                handleRoomCreated(message.roomCode);
+                break;
+            case 'room_joined':
+                handleRoomJoined(message);
+                break;
+            case 'player_joined':
+                updateRoomPlayers(message.players);
+                break;
+            case 'rps_choice':
+                handleRPSOpponentChoice(message.choice);
+                break;
+        }
+    } catch (error) {
+        console.error('Error handling message:', error);
+    }
+}
+
+function createRoom() {
+    // Generate random room code
+    const roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    currentRoom = roomCode;
+    isHost = true;
+    
+    // Update UI
+    showRoomInfo(roomCode, 'Room created! Waiting for player...', 'waiting');
+    updateRoomPlayers(['You (Host)']);
+    
+    // Mock WebSocket response
+    socket.send(JSON.stringify({
+        type: 'room_created',
+        roomCode: roomCode,
+        playerName: 'Player 1'
+    }));
+}
+
+function joinRoom(roomCode) {
+    if (!roomCode || roomCode.length !== 6) {
+        alert('Please enter a valid 6-character room code');
+        return;
+    }
+    
+    currentRoom = roomCode;
+    isHost = false;
+    
+    // Update UI
+    showRoomInfo(roomCode, 'Connected! Waiting for host...', 'connected');
+    updateRoomPlayers(['Host', 'You (Player 2)']);
+    
+    // Mock WebSocket response
+    socket.send(JSON.stringify({
+        type: 'room_joined',
+        roomCode: roomCode,
+        playerName: 'Player 2'
+    }));
+}
+
+function showRoomInfo(roomCode, statusText, statusClass) {
+    const roomInfo = document.getElementById('roomInfo');
+    const roomCodeDisplay = document.getElementById('roomCodeDisplay');
+    const roomStatus = document.getElementById('roomStatus');
+    
+    if (roomInfo) roomInfo.classList.remove('hidden');
+    if (roomCodeDisplay) roomCodeDisplay.textContent = roomCode;
+    if (roomStatus) {
+        roomStatus.textContent = statusText;
+        roomStatus.className = `room-status ${statusClass}`;
+    }
+}
+
+function updateRoomPlayers(players) {
+    const roomPlayers = document.getElementById('roomPlayers');
+    if (!roomPlayers) return;
+    
+    roomPlayers.innerHTML = '';
+    players.forEach((player, index) => {
+        const playerElement = document.createElement('div');
+        playerElement.className = 'player-item';
+        playerElement.innerHTML = `
+            <i class="fas fa-user"></i>
+            <span>${player}</span>
+            ${index === 0 ? '<span class="host-badge">Host</span>' : ''}
+        `;
+        roomPlayers.appendChild(playerElement);
+    });
+}
+
 // ========== ROCK PAPER SCISSORS GAME ==========
 let rpsPlayerScore = 0;
 let rpsAIScore = 0;
@@ -121,6 +293,8 @@ let rpsRound = 1;
 const maxRounds = 5;
 let rpsHistory = [];
 let isMultiplayer = false;
+let rpsWaitingForOpponent = false;
+let rpsPlayerChoice = null;
 
 function initRPSGame() {
     const choiceBtns = document.querySelectorAll('.choice-btn[data-choice]');
@@ -135,8 +309,24 @@ function initRPSGame() {
     // Choice buttons
     choiceBtns.forEach(btn => {
         btn.addEventListener('click', () => {
+            if (rpsWaitingForOpponent) return;
+            
             const playerChoice = btn.dataset.choice;
-            playRPSRound(playerChoice);
+            rpsPlayerChoice = playerChoice;
+            
+            // Update UI to show selection
+            choiceBtns.forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            
+            // If multiplayer and connected, send choice
+            if (isMultiplayer && currentRoom) {
+                sendRPSChoice(playerChoice);
+                rpsWaitingForOpponent = true;
+                updateRPSMessage('Waiting for opponent...');
+            } else {
+                // Play against AI
+                playRPSRound(playerChoice);
+            }
         });
     });
     
@@ -148,12 +338,16 @@ function initRPSGame() {
     // Mode toggle
     if (modeBtn) {
         modeBtn.addEventListener('click', () => {
-            isMultiplayer = !isMultiplayer;
-            modeBtn.innerHTML = isMultiplayer ? 
-                '<i class="fas fa-user-friends"></i> vs Player' : 
-                '<i class="fas fa-robot"></i> vs AI';
-            updateOpponentLabel();
-            resetRPSGame();
+            if (!currentRoom) {
+                isMultiplayer = !isMultiplayer;
+                modeBtn.innerHTML = isMultiplayer ? 
+                    '<i class="fas fa-user-friends"></i> Multiplayer' : 
+                    '<i class="fas fa-robot"></i> vs AI';
+                updateOpponentLabel();
+                resetRPSGame();
+            } else {
+                alert('Cannot change mode while in multiplayer room! Leave room first.');
+            }
         });
     }
     
@@ -162,6 +356,89 @@ function initRPSGame() {
         helpBtn.addEventListener('click', () => {
             alert('🎮 Rock Paper Scissors Rules:\n\n• Rock beats Scissors\n• Paper beats Rock\n• Scissors beats Paper\n\nFirst to win 3 rounds wins the game!');
         });
+    }
+    
+    // Initialize history table
+    updateRPSHistoryDisplay();
+}
+
+function sendRPSChoice(choice) {
+    if (!socket || !currentRoom) return;
+    
+    socket.send(JSON.stringify({
+        type: 'rps_choice',
+        roomCode: currentRoom,
+        choice: choice,
+        isHost: isHost
+    }));
+}
+
+function handleRPSOpponentChoice(opponentChoice) {
+    if (!rpsPlayerChoice) return;
+    
+    playRPSRound(rpsPlayerChoice, opponentChoice);
+    rpsWaitingForOpponent = false;
+}
+
+function playRPSRound(playerChoice, opponentChoice = null) {
+    if (rpsRound > maxRounds) return;
+    
+    // Get opponent choice
+    if (!opponentChoice) {
+        opponentChoice = getAIChoice();
+    }
+    
+    // Determine winner
+    const winner = determineRPSWinner(playerChoice, opponentChoice);
+    
+    // Update scores
+    if (winner === 'player') {
+        rpsPlayerScore++;
+    } else if (winner === 'opponent') {
+        rpsAIScore++;
+    }
+    
+    // Update UI
+    updateRPSScores();
+    
+    // Display choices
+    const playerChoiceDisplay = document.getElementById('playerChoiceDisplay');
+    const aiChoiceDisplay = document.getElementById('aiChoiceDisplay');
+    const rpsMessageEl = document.getElementById('rpsMessage');
+    const choiceLabel = document.getElementById('choiceLabel');
+    
+    if (playerChoiceDisplay) {
+        playerChoiceDisplay.textContent = getEmoji(playerChoice);
+    }
+    if (aiChoiceDisplay) {
+        aiChoiceDisplay.textContent = getEmoji(opponentChoice);
+    }
+    if (choiceLabel) {
+        choiceLabel.textContent = isMultiplayer ? 'Player 2 Choice' : 'AI Choice';
+    }
+    if (rpsMessageEl) {
+        const messages = {
+            'player': '🎉 You win this round!',
+            'opponent': isMultiplayer ? '😞 Player 2 wins this round!' : '😞 AI wins this round!',
+            'tie': '🤝 This round is a tie!'
+        };
+        rpsMessageEl.textContent = messages[winner];
+    }
+    
+    // Add to history
+    addToRPSHistory(playerChoice, opponentChoice, winner);
+    
+    // Increment round
+    rpsRound++;
+    
+    // Check if game is over
+    if (rpsRound > maxRounds) {
+        endRPSGame();
+    } else {
+        // Reset choice for next round
+        rpsPlayerChoice = null;
+        const choiceBtns = document.querySelectorAll('.choice-btn[data-choice]');
+        choiceBtns.forEach(btn => btn.classList.remove('selected'));
     }
 }
 
@@ -181,13 +458,21 @@ function updateRPSScores() {
             if (rpsPlayerScore > rpsAIScore) {
                 rpsMessageEl.textContent = '🎉 You won the game!';
                 saveGameResult(true);
+                triggerConfetti();
             } else if (rpsAIScore > rpsPlayerScore) {
-                rpsMessageEl.textContent = '😞 AI won the game!';
+                rpsMessageEl.textContent = isMultiplayer ? '😞 Player 2 won the game!' : '😞 AI won the game!';
                 saveGameResult(false);
             } else {
                 rpsMessageEl.textContent = '🤝 The game is a tie!';
             }
         }
+    }
+}
+
+function updateRPSMessage(message) {
+    const rpsMessageEl = document.getElementById('rpsMessage');
+    if (rpsMessageEl) {
+        rpsMessageEl.textContent = message;
     }
 }
 
@@ -199,12 +484,6 @@ function updateOpponentLabel() {
 }
 
 function getAIChoice() {
-    const choices = ['rock', 'paper', 'scissors'];
-    return choices[Math.floor(Math.random() * choices.length)];
-}
-
-function getPlayer2Choice() {
-    // For multiplayer, simulate player 2 choice
     const choices = ['rock', 'paper', 'scissors'];
     return choices[Math.floor(Math.random() * choices.length)];
 }
@@ -221,57 +500,6 @@ function determineRPSWinner(playerChoice, opponentChoice) {
     }
     
     return 'opponent';
-}
-
-function playRPSRound(playerChoice) {
-    if (rpsRound > maxRounds) return;
-    
-    // Get opponent choice
-    const opponentChoice = isMultiplayer ? getPlayer2Choice() : getAIChoice();
-    
-    // Determine winner
-    const winner = determineRPSWinner(playerChoice, opponentChoice);
-    
-    // Update scores
-    if (winner === 'player') {
-        rpsPlayerScore++;
-    } else if (winner === 'opponent') {
-        rpsAIScore++;
-    }
-    
-    // Update UI
-    updateRPSScores();
-    
-    // Display choices
-    const playerChoiceDisplay = document.getElementById('playerChoiceDisplay');
-    const aiChoiceDisplay = document.getElementById('aiChoiceDisplay');
-    const rpsMessageEl = document.getElementById('rpsMessage');
-    
-    if (playerChoiceDisplay) {
-        playerChoiceDisplay.textContent = getEmoji(playerChoice);
-    }
-    if (aiChoiceDisplay) {
-        aiChoiceDisplay.textContent = getEmoji(opponentChoice);
-    }
-    if (rpsMessageEl) {
-        const messages = {
-            'player': '🎉 You win this round!',
-            'opponent': '😞 Opponent wins this round!',
-            'tie': '🤝 This round is a tie!'
-        };
-        rpsMessageEl.textContent = messages[winner];
-    }
-    
-    // Add to history
-    addToRPSHistory(playerChoice, opponentChoice, winner);
-    
-    // Increment round
-    rpsRound++;
-    
-    // Check if game is over
-    if (rpsRound > maxRounds) {
-        endRPSGame();
-    }
 }
 
 function getEmoji(choice) {
@@ -324,8 +552,8 @@ function updateRPSHistoryDisplay() {
 
 function getWinnerText(winner) {
     const winnerTexts = {
-        'player': '🏆 Player',
-        'opponent': '🤖 AI',
+        'player': '🏆 You',
+        'opponent': isMultiplayer ? '👤 Player 2' : '🤖 AI',
         'tie': '🤝 Tie'
     };
     return winnerTexts[winner] || 'N/A';
@@ -337,11 +565,6 @@ function endRPSGame() {
         btn.disabled = true;
         btn.style.opacity = '0.5';
     });
-    
-    // Add confetti effect for win
-    if (rpsPlayerScore > rpsAIScore) {
-        triggerConfetti();
-    }
 }
 
 function triggerConfetti() {
@@ -382,6 +605,8 @@ function resetRPSGame() {
     rpsAIScore = 0;
     rpsRound = 1;
     rpsHistory = [];
+    rpsWaitingForOpponent = false;
+    rpsPlayerChoice = null;
     
     updateRPSScores();
     updateRPSHistoryDisplay();
@@ -390,9 +615,11 @@ function resetRPSGame() {
     const playerChoiceDisplay = document.getElementById('playerChoiceDisplay');
     const aiChoiceDisplay = document.getElementById('aiChoiceDisplay');
     const rpsMessageEl = document.getElementById('rpsMessage');
+    const choiceLabel = document.getElementById('choiceLabel');
     
     if (playerChoiceDisplay) playerChoiceDisplay.textContent = '❓';
     if (aiChoiceDisplay) aiChoiceDisplay.textContent = '❓';
+    if (choiceLabel) choiceLabel.textContent = isMultiplayer ? 'Player 2 Choice' : 'AI Choice';
     if (rpsMessageEl) rpsMessageEl.textContent = 'Make your first move!';
     
     // Re-enable buttons
@@ -400,6 +627,7 @@ function resetRPSGame() {
     choiceBtns.forEach(btn => {
         btn.disabled = false;
         btn.style.opacity = '1';
+        btn.classList.remove('selected');
     });
 }
 
@@ -412,7 +640,7 @@ let memoryTimer = null;
 let timeElapsed = 0;
 let isMemoryGameActive = false;
 const totalPairs = 8;
-const memoryGameTime = 60; // 60 seconds
+const memoryGameTime = 60;
 
 function initMemoryGame() {
     const startBtn = document.getElementById('memoryStart');
@@ -429,7 +657,7 @@ function initMemoryGame() {
     
     if (helpBtn) {
         helpBtn.addEventListener('click', () => {
-            alert('🎮 Memory Game Rules:\n\n• Click cards to flip them\n• Match pairs of identical cards\n• Complete all pairs before time runs out\n• Score points for each matched pair');
+            alert('🎮 Memory Game Rules:\n\n• Click Start Game to begin\n• Click cards to flip them\n• Match pairs of identical cards\n• Complete all pairs before time runs out\n• Score 10 points for each matched pair');
         });
     }
     
@@ -495,18 +723,26 @@ function startMemoryGame() {
     
     // Update UI
     const startBtn = document.getElementById('memoryStart');
+    const messageEl = document.getElementById('memoryMessage');
+    
     if (startBtn) {
         startBtn.disabled = true;
         startBtn.style.opacity = '0.5';
     }
+    
+    if (messageEl) {
+        messageEl.textContent = 'Game started! Find all matches!';
+    }
 }
 
 function updateMemoryTimer() {
-    const timerEl = document.getElementById('memoryTimer');
+    const timerEl = document.getElementById('memoryTime');
     const timeLeft = memoryGameTime - timeElapsed;
     
     if (timerEl) {
-        timerEl.textContent = `${Math.floor(timeLeft / 60)}:${(timeLeft % 60).toString().padStart(2, '0')}`;
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
         
         // Color coding for time
         if (timeLeft < 10) {
@@ -527,8 +763,15 @@ function flipMemoryCard(card) {
     // Don't allow flipping more than 2 cards
     if (flippedCards.length >= 2) return;
     
+    // Show card
     card.classList.add('flipped');
     flippedCards.push(card);
+    
+    // Update moves
+    const movesEl = document.getElementById('memoryMoves');
+    if (movesEl) {
+        movesEl.textContent = parseInt(movesEl.textContent) + 1;
+    }
     
     if (flippedCards.length === 2) {
         checkMemoryMatch();
@@ -540,24 +783,24 @@ function checkMemoryMatch() {
     
     if (card1.dataset.symbol === card2.dataset.symbol) {
         // Match found
-        card1.classList.add('matched');
-        card2.classList.add('matched');
-        matchedPairs++;
-        memoryScore += 10;
-        
-        updateMemoryScore();
-        
-        // Check if game is complete
-        if (matchedPairs === totalPairs) {
-            endMemoryGame(true);
-        }
-        
-        // Clear flipped cards after delay
         setTimeout(() => {
+            card1.classList.add('matched');
+            card2.classList.add('matched');
+            matchedPairs++;
+            memoryScore += 10;
+            
+            updateMemoryScore();
+            
+            // Check if game is complete
+            if (matchedPairs === totalPairs) {
+                endMemoryGame(true);
+            }
+            
+            // Clear flipped cards
             flippedCards = [];
         }, 500);
     } else {
-        // No match
+        // No match - flip back after delay
         setTimeout(() => {
             card1.classList.remove('flipped');
             card2.classList.remove('flipped');
@@ -567,9 +810,9 @@ function checkMemoryMatch() {
 }
 
 function updateMemoryScore() {
-    const scoreEl = document.getElementById('memoryScore');
+    const scoreEl = document.getElementById('memoryMatches');
     if (scoreEl) {
-        scoreEl.textContent = memoryScore;
+        scoreEl.textContent = matchedPairs;
     }
 }
 
@@ -592,7 +835,7 @@ function endMemoryGame(isWin) {
     const messageEl = document.getElementById('memoryMessage');
     if (messageEl) {
         if (isWin) {
-            messageEl.textContent = `🎉 You won! Time: ${timeElapsed}s Score: ${memoryScore}`;
+            messageEl.textContent = `🎉 You won! Time: ${timeElapsed}s Matches: ${matchedPairs}`;
             saveGameResult(true);
             
             // Trigger confetti for win
@@ -627,10 +870,11 @@ function resetMemoryGame() {
     updateMemoryScore();
     updateMemoryTimer();
     
+    const movesEl = document.getElementById('memoryMoves');
     const messageEl = document.getElementById('memoryMessage');
-    if (messageEl) {
-        messageEl.textContent = 'Click Start to begin!';
-    }
+    
+    if (movesEl) movesEl.textContent = '0';
+    if (messageEl) messageEl.textContent = 'Click Start to begin!';
     
     const startBtn = document.getElementById('memoryStart');
     if (startBtn) {
@@ -647,7 +891,7 @@ let tttBoard = ['', '', '', '', '', '', '', '', ''];
 let tttCurrentPlayer = 'X';
 let tttGameActive = true;
 let tttScores = { 'X': 0, 'O': 0, 'ties': 0 };
-let tttMode = 'ai'; // 'ai' or 'player'
+let tttMode = 'ai';
 
 function initTTTGame() {
     const cells = document.querySelectorAll('.ttt-cell');
@@ -668,9 +912,13 @@ function initTTTGame() {
     // Mode toggle
     if (modeBtn) {
         modeBtn.addEventListener('click', () => {
-            tttMode = tttMode === 'ai' ? 'player' : 'ai';
-            modeBtn.textContent = tttMode === 'ai' ? '🤖 vs AI' : '👥 2 Players';
-            resetTTTGame();
+            if (!currentRoom) {
+                tttMode = tttMode === 'ai' ? 'player' : 'ai';
+                modeBtn.textContent = tttMode === 'ai' ? '🤖 vs AI' : '👥 2 Players';
+                resetTTTGame();
+            } else {
+                alert('Cannot change mode while in multiplayer room!');
+            }
         });
     }
     
@@ -681,6 +929,8 @@ function initTTTGame() {
         });
     }
     
+    // Initialize scores display
+    updateTTTScores();
     updateTTTStatus();
 }
 
@@ -745,7 +995,7 @@ function updateTTTBoard() {
     const cells = document.querySelectorAll('.ttt-cell');
     cells.forEach((cell, index) => {
         cell.textContent = tttBoard[index];
-        cell.classList.remove('x', 'o');
+        cell.classList.remove('x', 'o', 'winning');
         if (tttBoard[index] === 'X') cell.classList.add('x');
         if (tttBoard[index] === 'O') cell.classList.add('o');
     });
@@ -753,12 +1003,18 @@ function updateTTTBoard() {
 
 function updateTTTStatus() {
     const statusEl = document.getElementById('tttStatus');
+    const currentPlayerEl = document.getElementById('currentPlayer');
+    
     if (statusEl) {
         const playerNames = {
             'X': tttMode === 'ai' ? 'Player' : 'Player 1',
             'O': tttMode === 'ai' ? 'AI' : 'Player 2'
         };
         statusEl.textContent = `${playerNames[tttCurrentPlayer]}'s turn (${tttCurrentPlayer})`;
+    }
+    
+    if (currentPlayerEl) {
+        currentPlayerEl.textContent = tttCurrentPlayer;
     }
 }
 
@@ -769,29 +1025,24 @@ function checkTTTWin() {
         [0, 4, 8], [2, 4, 6] // Diagonals
     ];
     
-    return winPatterns.some(pattern => {
+    for (const pattern of winPatterns) {
         const [a, b, c] = pattern;
-        return tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c];
-    });
+        if (tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function checkTTTTie() {
-    return !tttBoard.includes('');
+    return tttBoard.every(cell => cell !== '');
 }
 
 function updateTTTScores() {
-    if (tttCurrentPlayer === 'X' && checkTTTWin()) {
-        tttScores['X']++;
-    } else if (tttCurrentPlayer === 'O' && checkTTTWin()) {
-        tttScores['O']++;
-    } else if (checkTTTTie()) {
-        tttScores['ties']++;
-    }
-    
     // Update score display
-    const xScoreEl = document.getElementById('tttXScore');
-    const oScoreEl = document.getElementById('tttOScore');
-    const tiesEl = document.getElementById('tttTies');
+    const xScoreEl = document.getElementById('scoreX');
+    const oScoreEl = document.getElementById('scoreO');
+    const tiesEl = document.getElementById('scoreDraw');
     
     if (xScoreEl) xScoreEl.textContent = tttScores['X'];
     if (oScoreEl) oScoreEl.textContent = tttScores['O'];
@@ -808,11 +1059,18 @@ function endTTTGame(message) {
     
     // Save game result if player won
     if (message.includes('X wins') && tttMode === 'ai') {
+        tttScores['X']++;
         saveGameResult(true);
         triggerConfetti();
     } else if (message.includes('O wins') && tttMode === 'ai') {
+        tttScores['O']++;
         saveGameResult(false);
+    } else if (message.includes('tie')) {
+        tttScores['ties']++;
     }
+    
+    // Update scores display
+    updateTTTScores();
     
     // Highlight winning cells
     highlightWinningCells();
@@ -852,6 +1110,416 @@ function resetTTTGame() {
     updateTTTStatus();
 }
 
+// ========== SNAKE GAME ==========
+let snakeGameActive = false;
+let snakeGamePaused = false;
+let snakeDirection = 'right';
+let nextDirection = 'right';
+let snake = [{x: 5, y: 5}];
+let food = {x: 10, y: 10};
+let snakeScore = 0;
+let snakeHighScore = parseInt(localStorage.getItem('snakeHighScore')) || 0;
+let snakeSpeed = 150;
+let snakeGameLoop = null;
+const gridSize = 20;
+const boardSize = 15;
+
+function initSnakeGame() {
+    const resetBtn = document.getElementById('snakeReset');
+    const pauseBtn = document.getElementById('snakePause');
+    const helpBtn = document.getElementById('snakeHelp');
+    const dirBtns = document.querySelectorAll('.dir-btn[data-dir]');
+    
+    // Initialize display
+    updateSnakeScore();
+    updateSnakeHighScore();
+    
+    // Reset button
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetSnakeGame);
+    }
+    
+    // Pause button
+    if (pauseBtn) {
+        pauseBtn.addEventListener('click', toggleSnakePause);
+    }
+    
+    // Help button
+    if (helpBtn) {
+        helpBtn.addEventListener('click', () => {
+            alert('🎮 Snake Game Controls:\n\n• Arrow Keys or WASD to move\n• Space to pause/resume\n• R to restart\n• Eat food (🍎) to grow\n• Avoid walls and yourself!');
+        });
+    }
+    
+    // Direction buttons (mobile)
+    dirBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const dir = btn.dataset.dir;
+            changeSnakeDirection(dir);
+        });
+    });
+    
+    // Keyboard controls
+    document.addEventListener('keydown', handleSnakeKeyDown);
+    
+    // Draw initial board
+    drawSnakeBoard();
+}
+
+function drawSnakeBoard() {
+    const board = document.getElementById('snakeBoard');
+    if (!board) return;
+    
+    board.innerHTML = '';
+    
+    // Create cells
+    for (let y = 0; y < boardSize; y++) {
+        for (let x = 0; x < boardSize; x++) {
+            const cell = document.createElement('div');
+            cell.className = 'snake-cell';
+            cell.dataset.x = x;
+            cell.dataset.y = y;
+            board.appendChild(cell);
+        }
+    }
+    
+    // Draw initial snake and food
+    drawSnake();
+    drawFood();
+}
+
+function drawSnake() {
+    const cells = document.querySelectorAll('.snake-cell');
+    
+    // Clear previous snake
+    cells.forEach(cell => {
+        cell.classList.remove('snake-head', 'snake-body');
+    });
+    
+    // Draw snake body
+    snake.forEach((segment, index) => {
+        const cell = document.querySelector(`.snake-cell[data-x="${segment.x}"][data-y="${segment.y}"]`);
+        if (cell) {
+            if (index === 0) {
+                cell.classList.add('snake-head');
+            } else {
+                cell.classList.add('snake-body');
+            }
+        }
+    });
+}
+
+function drawFood() {
+    const cells = document.querySelectorAll('.snake-cell');
+    
+    cells.forEach(cell => cell.classList.remove('snake-food'));
+    
+    const foodCell = document.querySelector(`.snake-cell[data-x="${food.x}"][data-y="${food.y}"]`);
+    if (foodCell) {
+        foodCell.classList.add('snake-food');
+    }
+}
+
+function updateSnakeScore() {
+    const scoreEl = document.getElementById('snakeScore');
+    if (scoreEl) {
+        scoreEl.textContent = snakeScore;
+    }
+    
+    // Update level based on score
+    const levelEl = document.getElementById('snakeLevel');
+    if (levelEl) {
+        const level = Math.floor(snakeScore / 5) + 1;
+        levelEl.textContent = level;
+        snakeSpeed = Math.max(50, 150 - (level * 10));
+    }
+}
+
+function updateSnakeHighScore() {
+    const highScoreEl = document.getElementById('snakeHighScore');
+    if (highScoreEl) {
+        highScoreEl.textContent = snakeHighScore;
+    }
+}
+
+function startSnakeGame() {
+    if (snakeGameActive) return;
+    
+    snakeGameActive = true;
+    snakeGamePaused = false;
+    
+    const messageEl = document.getElementById('snakeMessage');
+    if (messageEl) {
+        messageEl.textContent = 'Game Started!';
+    }
+    
+    const pauseBtn = document.getElementById('snakePause');
+    if (pauseBtn) {
+        pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+    }
+    
+    // Start game loop
+    snakeGameLoop = setInterval(gameLoop, snakeSpeed);
+}
+
+function gameLoop() {
+    if (snakeGamePaused || !snakeGameActive) return;
+    
+    // Update direction
+    snakeDirection = nextDirection;
+    
+    // Move snake
+    const head = {...snake[0]};
+    
+    switch(snakeDirection) {
+        case 'up': head.y--; break;
+        case 'down': head.y++; break;
+        case 'left': head.x--; break;
+        case 'right': head.x++; break;
+    }
+    
+    // Check collision with walls
+    if (head.x < 0 || head.x >= boardSize || head.y < 0 || head.y >= boardSize) {
+        gameOver();
+        return;
+    }
+    
+    // Check collision with self
+    if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+        gameOver();
+        return;
+    }
+    
+    // Add new head
+    snake.unshift(head);
+    
+    // Check if food eaten
+    if (head.x === food.x && head.y === food.y) {
+        snakeScore += 10;
+        updateSnakeScore();
+        generateFood();
+        
+        // Update high score
+        if (snakeScore > snakeHighScore) {
+            snakeHighScore = snakeScore;
+            localStorage.setItem('snakeHighScore', snakeHighScore);
+            updateSnakeHighScore();
+        }
+    } else {
+        // Remove tail if no food eaten
+        snake.pop();
+    }
+    
+    // Redraw
+    drawSnake();
+    drawFood();
+}
+
+function generateFood() {
+    let newFood;
+    do {
+        newFood = {
+            x: Math.floor(Math.random() * boardSize),
+            y: Math.floor(Math.random() * boardSize)
+        };
+    } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+    
+    food = newFood;
+}
+
+function changeSnakeDirection(newDirection) {
+    // Prevent 180-degree turns
+    if (
+        (newDirection === 'up' && snakeDirection !== 'down') ||
+        (newDirection === 'down' && snakeDirection !== 'up') ||
+        (newDirection === 'left' && snakeDirection !== 'right') ||
+        (newDirection === 'right' && snakeDirection !== 'left')
+    ) {
+        nextDirection = newDirection;
+    }
+}
+
+function handleSnakeKeyDown(event) {
+    if (!snakeGameActive && event.code === 'Space') {
+        startSnakeGame();
+        return;
+    }
+    
+    if (event.code === 'Space') {
+        toggleSnakePause();
+        return;
+    }
+    
+    if (event.code === 'KeyR') {
+        resetSnakeGame();
+        return;
+    }
+    
+    switch(event.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+            event.preventDefault();
+            changeSnakeDirection('up');
+            break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+            event.preventDefault();
+            changeSnakeDirection('down');
+            break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+            event.preventDefault();
+            changeSnakeDirection('left');
+            break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+            event.preventDefault();
+            changeSnakeDirection('right');
+            break;
+    }
+}
+
+function toggleSnakePause() {
+    if (!snakeGameActive) {
+        startSnakeGame();
+        return;
+    }
+    
+    snakeGamePaused = !snakeGamePaused;
+    
+    const pauseBtn = document.getElementById('snakePause');
+    const messageEl = document.getElementById('snakeMessage');
+    
+    if (pauseBtn) {
+        pauseBtn.innerHTML = snakeGamePaused ? 
+            '<i class="fas fa-play"></i> Resume' : 
+            '<i class="fas fa-pause"></i> Pause';
+    }
+    
+    if (messageEl) {
+        messageEl.textContent = snakeGamePaused ? 'Game Paused' : 'Game Started!';
+    }
+}
+
+function gameOver() {
+    snakeGameActive = false;
+    
+    if (snakeGameLoop) {
+        clearInterval(snakeGameLoop);
+        snakeGameLoop = null;
+    }
+    
+    const messageEl = document.getElementById('snakeMessage');
+    if (messageEl) {
+        messageEl.textContent = `Game Over! Score: ${snakeScore}`;
+    }
+    
+    saveGameResult(false);
+}
+
+function resetSnakeGame() {
+    snakeGameActive = false;
+    snakeGamePaused = false;
+    snakeDirection = 'right';
+    nextDirection = 'right';
+    snake = [{x: 5, y: 5}];
+    food = {x: 10, y: 10};
+    snakeScore = 0;
+    snakeSpeed = 150;
+    
+    if (snakeGameLoop) {
+        clearInterval(snakeGameLoop);
+        snakeGameLoop = null;
+    }
+    
+    // Update UI
+    updateSnakeScore();
+    
+    const pauseBtn = document.getElementById('snakePause');
+    const messageEl = document.getElementById('snakeMessage');
+    
+    if (pauseBtn) {
+        pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+    }
+    
+    if (messageEl) {
+        messageEl.textContent = 'Press Space to Start';
+    }
+    
+    // Redraw
+    drawSnakeBoard();
+}
+
+// ========== TUTORIAL FUNCTIONS ==========
+function initTutorial() {
+    // Practice buttons for RPS tutorial
+    const practiceBtns = document.querySelectorAll('.practice-btn[data-choice]');
+    practiceBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const choice = btn.dataset.choice;
+            const aiChoice = getAIChoice();
+            const winner = determineRPSWinner(choice, aiChoice);
+            
+            const resultEl = document.getElementById('practiceResult');
+            if (resultEl) {
+                const messages = {
+                    'player': `🎉 You win! ${getEmoji(choice)} beats ${getEmoji(aiChoice)}`,
+                    'opponent': `😞 AI wins! ${getEmoji(aiChoice)} beats ${getEmoji(choice)}`,
+                    'tie': `🤝 It's a tie! Both chose ${getEmoji(choice)}`
+                };
+                resultEl.textContent = messages[winner];
+            }
+        });
+    });
+    
+    // Tic Tac Toe practice board
+    const miniCells = document.querySelectorAll('.mini-cell');
+    let tttPracticeBoard = ['', '', '', '', '', '', '', '', ''];
+    let tttPracticePlayer = 'X';
+    
+    miniCells.forEach(cell => {
+        cell.addEventListener('click', () => {
+            const index = parseInt(cell.dataset.cell);
+            if (tttPracticeBoard[index] !== '') return;
+            
+            tttPracticeBoard[index] = tttPracticePlayer;
+            cell.textContent = tttPracticePlayer;
+            cell.classList.add(tttPracticePlayer.toLowerCase());
+            
+            // Switch player
+            tttPracticePlayer = tttPracticePlayer === 'X' ? 'O' : 'X';
+            
+            const statusEl = document.getElementById('practiceStatus');
+            if (statusEl) {
+                statusEl.textContent = `Player ${tttPracticePlayer}'s turn`;
+            }
+        });
+    });
+    
+    // Reset practice button
+    const resetPracticeBtn = document.getElementById('resetPractice');
+    if (resetPracticeBtn) {
+        resetPracticeBtn.addEventListener('click', () => {
+            tttPracticeBoard = ['', '', '', '', '', '', '', '', ''];
+            tttPracticePlayer = 'X';
+            
+            miniCells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o');
+            });
+            
+            const statusEl = document.getElementById('practiceStatus');
+            if (statusEl) {
+                statusEl.textContent = 'Player X\'s turn';
+            }
+        });
+    }
+}
+
 // ========== GAME RESET FUNCTION ==========
 function resetCurrentGame() {
     const activeGame = document.querySelector('.game-section.active');
@@ -869,45 +1537,10 @@ function resetCurrentGame() {
             case 'ttt':
                 resetTTTGame();
                 break;
+            case 'snake':
+                resetSnakeGame();
+                break;
         }
-    }
-}
-
-// ========== SETTINGS & PREFERENCES ==========
-function initSettings() {
-    const resetStatsBtn = document.getElementById('resetStats');
-    const soundToggle = document.getElementById('soundToggle');
-    const vibrationToggle = document.getElementById('vibrationToggle');
-    
-    if (resetStatsBtn) {
-        resetStatsBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to reset all game statistics? This cannot be undone.')) {
-                localStorage.removeItem('totalWins');
-                localStorage.removeItem('totalGames');
-                totalWins = 0;
-                totalGames = 0;
-                updateDashboardStats();
-                alert('Statistics have been reset.');
-            }
-        });
-    }
-    
-    if (soundToggle) {
-        const soundEnabled = localStorage.getItem('soundEnabled') !== 'false';
-        soundToggle.checked = soundEnabled;
-        
-        soundToggle.addEventListener('change', () => {
-            localStorage.setItem('soundEnabled', soundToggle.checked);
-        });
-    }
-    
-    if (vibrationToggle) {
-        const vibrationEnabled = localStorage.getItem('vibrationEnabled') !== 'false';
-        vibrationToggle.checked = vibrationEnabled;
-        
-        vibrationToggle.addEventListener('change', () => {
-            localStorage.setItem('vibrationEnabled', vibrationToggle.checked);
-        });
     }
 }
 
@@ -917,78 +1550,20 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initNavigation();
     updateDashboardStats();
-    initSettings();
+    initMultiplayer();
     
-    // Initialize games
-    initRPSGame();
-    initMemoryGame();
-    initTTTGame();
+    // Initialize games if on games page
+    if (document.querySelector('.games-dashboard')) {
+        initRPSGame();
+        initMemoryGame();
+        initTTTGame();
+        initSnakeGame();
+    }
     
-    // Add CSS for confetti animation
-    if (!document.querySelector('#confetti-styles')) {
-        const style = document.createElement('style');
-        style.id = 'confetti-styles';
-        style.textContent = `
-            @keyframes fall {
-                to {
-                    transform: translateY(100vh) rotate(360deg);
-                    opacity: 0;
-                }
-            }
-            
-            .confetti {
-                position: absolute;
-                width: 10px;
-                height: 10px;
-                background: var(--primary-color);
-                border-radius: 50%;
-                animation: fall 2s linear forwards;
-                z-index: 1000;
-            }
-        `;
-        document.head.appendChild(style);
+    // Initialize tutorial if on tutorial page
+    if (document.querySelector('.tutorial-content')) {
+        initTutorial();
     }
     
     console.log('GameHub initialized successfully! 🎮');
 });
-
-// ========== UTILITY FUNCTIONS ==========
-function vibrate(pattern = 100) {
-    if (navigator.vibrate && localStorage.getItem('vibrationEnabled') !== 'false') {
-        navigator.vibrate(pattern);
-    }
-}
-
-function playSound(soundType) {
-    if (localStorage.getItem('soundEnabled') === 'false') return;
-    
-    // Simple sound effects using Web Audio API
-    try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        switch(soundType) {
-            case 'win':
-                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                break;
-            case 'click':
-                oscillator.frequency.setValueAtTime(261.63, audioContext.currentTime); // C4
-                break;
-            case 'match':
-                oscillator.frequency.setValueAtTime(392.00, audioContext.currentTime); // G4
-                break;
-        }
-        
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-        
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.5);
-    } catch (error) {
-        console.log('Audio not supported:', error);
-    }
-}
