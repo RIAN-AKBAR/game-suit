@@ -68,6 +68,61 @@
                 </div>
             </div>
 
+            <!-- Multiplayer Section -->
+            <div class="multiplayer-section" id="multiplayerSection">
+                <div class="multiplayer-header">
+                    <i class="fas fa-users"></i>
+                    <h3>Multiplayer Mode</h3>
+                </div>
+                
+                <div class="room-controls">
+                    <button class="btn-room" id="createRoomBtn">
+                        <i class="fas fa-plus-circle"></i>
+                        Create Room
+                    </button>
+                    <div class="flex gap-2 w-full">
+                        <input type="text" 
+                               class="room-input" 
+                               id="joinRoomInput" 
+                               placeholder="Enter room code"
+                               maxlength="6">
+                        <button class="btn-room join" id="joinRoomBtn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Join Room
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="room-info hidden" id="roomInfo">
+                    <div class="room-code">
+                        <i class="fas fa-door-closed"></i>
+                        <span>Room Code:</span>
+                        <span class="code-value" id="roomCodeDisplay">ABC123</span>
+                    </div>
+                    
+                    <div class="room-status" id="roomStatus">
+                        <i class="fas fa-circle"></i>
+                        <span>Status: Not Connected</span>
+                    </div>
+                    
+                    <div class="room-players" id="roomPlayers">
+                        <!-- Players will be added here -->
+                    </div>
+                </div>
+                
+                <!-- Rock Paper Scissors Multiplayer Options -->
+                <div class="rps-multiplayer-options hidden" id="rpsMultiplayerOptions">
+                    <h4 class="mt-4 mb-2">Rock Paper Scissors Multiplayer</h4>
+                    <p>Challenge a friend in real-time! Share your room code and start playing.</p>
+                </div>
+                
+                <!-- Tic Tac Toe Multiplayer Options -->
+                <div class="ttt-multiplayer-options hidden" id="tttMultiplayerOptions">
+                    <h4 class="mt-4 mb-2">Tic Tac Toe Multiplayer</h4>
+                    <p>Play against a friend in this classic strategy game.</p>
+                </div>
+            </div>
+
             <!-- Game Selector -->
             <div class="game-selector">
                 <div class="selector-tabs">
@@ -165,7 +220,7 @@
                                 </div>
                                 <div class="vs">VS</div>
                                 <div class="ai-choice">
-                                    <div class="choice-label">AI Choice</div>
+                                    <div class="choice-label" id="choiceLabel">AI Choice</div>
                                     <div class="choice-show" id="aiChoiceDisplay">-</div>
                                 </div>
                             </div>
@@ -173,7 +228,22 @@
                             <!-- Game History -->
                             <div class="game-history">
                                 <h4>Round History</h4>
-                                <div class="history-list" id="rpsHistory"></div>
+                                <div class="history-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Round</th>
+                                                <th>Your Choice</th>
+                                                <th>Opponent</th>
+                                                <th>Result</th>
+                                                <th>Score</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="rpsHistoryBody">
+                                            <!-- History rows will be added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -278,7 +348,7 @@
                                 <div class="stat">
                                     <i class="fas fa-clock"></i>
                                     <div class="stat-info">
-                                        <div class="stat-value" id="memoryTime">0s</div>
+                                        <div class="stat-value" id="memoryTime">1:00</div>
                                         <div class="stat-label">Time</div>
                                     </div>
                                 </div>
@@ -308,6 +378,9 @@
                                 <button class="btn-start" id="memoryStart">
                                     <i class="fas fa-play"></i> Start Game
                                 </button>
+                                <div class="memory-message" id="memoryMessage">
+                                    Click Start to begin!
+                                </div>
                             </div>
                         </div>
                     </div>
