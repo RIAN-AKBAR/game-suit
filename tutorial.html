@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameHub - Tutorial</title>
+    <title>GameHub - Tutorial & Guides</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="tutorial.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,15 +36,11 @@
         </div>
     </nav>
 
-    <!-- Tutorial Hero -->
-    <section class="tutorial-hero">
+    <!-- Tutorial Header -->
+    <section class="tutorial-header">
         <div class="container">
-            <h1 class="hero-title">
-                <i class="fas fa-graduation-cap"></i> Game Tutorials
-            </h1>
-            <p class="hero-subtitle">
-                Learn how to play all our games with detailed guides and tips
-            </p>
+            <h1 class="page-title">Game Tutorials</h1>
+            <p class="page-subtitle">Learn how to play all our games with detailed guides and tips to improve your skills.</p>
         </div>
     </section>
 
@@ -51,539 +48,549 @@
     <section class="tutorial-nav">
         <div class="container">
             <div class="tutorial-tabs">
-                <button class="tutorial-tab active" data-tutorial="rps">
+                <button class="tutorial-tab active" data-tab="rps-tutorial">
                     <i class="fas fa-hand-scissors"></i>
-                    <span>Rock Paper Scissors</span>
+                    Rock Paper Scissors
                 </button>
-                <button class="tutorial-tab" data-tutorial="ttt">
+                <button class="tutorial-tab" data-tab="ttt-tutorial">
                     <i class="fas fa-times"></i>
-                    <span>Tic Tac Toe</span>
+                    Tic Tac Toe
                 </button>
-                <button class="tutorial-tab" data-tutorial="memory">
+                <button class="tutorial-tab" data-tab="memory-tutorial">
                     <i class="fas fa-brain"></i>
-                    <span>Memory Match</span>
+                    Memory Match
                 </button>
-                <button class="tutorial-tab" data-tutorial="snake">
+                <button class="tutorial-tab" data-tab="snake-tutorial">
                     <i class="fas fa-snake"></i>
-                    <span>Snake Game</span>
+                    Snake Game
                 </button>
             </div>
         </div>
     </section>
 
     <!-- Tutorial Content -->
-    <main class="tutorial-content">
+    <section class="tutorial-content">
         <div class="container">
             <!-- Rock Paper Scissors Tutorial -->
             <div class="tutorial-section active" id="rps-tutorial">
-                <div class="tutorial-header">
-                    <h2 class="tutorial-title">
-                        <i class="fas fa-hand-scissors"></i> Rock Paper Scissors
-                    </h2>
-                    <div class="tutorial-meta">
-                        <span class="meta-item">
-                            <i class="fas fa-clock"></i> 5 min read
-                        </span>
-                        <span class="meta-item">
-                            <i class="fas fa-users"></i> 1-2 Players
-                        </span>
-                        <span class="meta-item">
-                            <i class="fas fa-chart-line"></i> Beginner
-                        </span>
+                <div class="tutorial-section-header">
+                    <h2><i class="fas fa-hand-scissors"></i> Rock Paper Scissors Tutorial</h2>
+                    <div class="difficulty">
+                        <span class="difficulty-label">Difficulty:</span>
+                        <span class="difficulty-level easy">Easy</span>
                     </div>
                 </div>
-
-                <div class="tutorial-body">
-                    <!-- Basic Rules -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">📚 Basic Rules</h3>
-                        <p>Rock Paper Scissors is a classic hand game where two players choose one of three options:</p>
-                        <div class="rules-grid">
-                            <div class="rule-card">
-                                <div class="rule-icon">🪨</div>
-                                <h4>Rock</h4>
-                                <p>Crushes scissors</p>
-                            </div>
-                            <div class="rule-card">
-                                <div class="rule-icon">📄</div>
-                                <h4>Paper</h4>
-                                <p>Covers rock</p>
-                            </div>
-                            <div class="rule-card">
-                                <div class="rule-icon">✂️</div>
-                                <h4>Scissors</h4>
-                                <p>Cuts paper</p>
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">01</div>
+                            <h3>Basic Rules</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <p>Rock Paper Scissors is a simple hand game with three possible moves:</p>
+                            <ul>
+                                <li><strong>Rock</strong> beats Scissors</li>
+                                <li><strong>Scissors</strong> beats Paper</li>
+                                <li><strong>Paper</strong> beats Rock</li>
+                            </ul>
+                            <div class="rule-visual">
+                                <div class="rule-item">
+                                    <i class="fas fa-hand-rock"></i>
+                                    <i class="fas fa-arrow-right"></i>
+                                    <i class="fas fa-hand-scissors"></i>
+                                </div>
+                                <div class="rule-item">
+                                    <i class="fas fa-hand-scissors"></i>
+                                    <i class="fas fa-arrow-right"></i>
+                                    <i class="fas fa-hand-paper"></i>
+                                </div>
+                                <div class="rule-item">
+                                    <i class="fas fa-hand-paper"></i>
+                                    <i class="fas fa-arrow-right"></i>
+                                    <i class="fas fa-hand-rock"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- How to Play -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🎮 How to Play</h3>
-                        <ol class="steps-list">
-                            <li>
-                                <strong>Choose your move</strong> by clicking on Rock, Paper, or Scissors
-                            </li>
-                            <li>
-                                <strong>The AI will choose</strong> its move randomly
-                            </li>
-                            <li>
-                                <strong>Results are compared</strong> based on the rules above
-                            </li>
-                            <li>
-                                <strong>Score is updated</strong> for each round
-                            </li>
-                            <li>
-                                <strong>First to win 3 rounds</strong> wins the game
-                            </li>
-                        </ol>
-                    </div>
-
-                    <!-- Multiplayer Mode -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">👥 Multiplayer Mode</h3>
-                        <p>You can also play with friends in real-time multiplayer mode:</p>
-                        <ol class="steps-list">
-                            <li>Click "Create Room" to create a new game room</li>
-                            <li>Share the room code with your friend</li>
-                            <li>Your friend enters the code in "Join Room"</li>
-                            <li>Both players make their choices</li>
-                            <li>Results are shown in real-time</li>
-                        </ol>
-                    </div>
-
-                    <!-- Winning Strategy -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🏆 Winning Strategy</h3>
-                        <div class="strategy-tips">
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-random"></i>
-                                </div>
-                                <h4>Be Unpredictable</h4>
-                                <p>Mix up your choices to prevent the AI from learning your pattern.</p>
-                            </div>
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-brain"></i>
-                                </div>
-                                <h4>Think Ahead</h4>
-                                <p>Try to anticipate what the AI might choose based on previous rounds.</p>
-                            </div>
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-chart-bar"></i>
-                                </div>
-                                <h4>Watch Patterns</h4>
-                                <p>Some AIs have patterns - track choices to spot them.</p>
-                            </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">02</div>
+                            <h3>Game Modes</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <h4>Three ways to play:</h4>
+                            <ol>
+                                <li><strong>vs AI:</strong> Play against computer</li>
+                                <li><strong>Local Multiplayer:</strong> Two players on same device</li>
+                                <li><strong>Online Multiplayer:</strong> Create or join room with code</li>
+                            </ol>
+                            <p><strong>Note:</strong> First to 5 points wins the match!</p>
                         </div>
                     </div>
-
-                    <!-- Quick Practice -->
-                    <div class="tutorial-block practice">
-                        <h3 class="block-title">🎯 Quick Practice</h3>
-                        <div class="practice-area">
-                            <div class="practice-choices">
-                                <button class="practice-btn" data-choice="rock">
-                                    🪨 Rock
-                                </button>
-                                <button class="practice-btn" data-choice="paper">
-                                    📄 Paper
-                                </button>
-                                <button class="practice-btn" data-choice="scissors">
-                                    ✂️ Scissors
-                                </button>
-                            </div>
-                            <div class="practice-result">
-                                <p id="practiceResult">Choose a move to practice!</p>
-                            </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">03</div>
+                            <h3>Multiplayer Features</h3>
                         </div>
+                        <div class="tutorial-card-body">
+                            <h4>Local Multiplayer:</h4>
+                            <ul>
+                                <li>Player 1 chooses first</li>
+                                <li>Player 2 chooses after</li>
+                                <li>Choices revealed simultaneously</li>
+                                <li>Automatic turn switching</li>
+                            </ul>
+                            
+                            <h4>Online Multiplayer:</h4>
+                            <ul>
+                                <li>Create room with unique code</li>
+                                <li>Share code with friend</li>
+                                <li>Both players choose independently</li>
+                                <li>Real-time result display</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">04</div>
+                            <h3>Winning Strategies</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <p>While Rock Paper Scissors is random, you can try to predict your opponent:</p>
+                            <ul>
+                                <li>Beginners often start with Rock</li>
+                                <li>If someone wins with a move, they might repeat it</li>
+                                <li>Try to detect patterns in opponent's choices</li>
+                                <li>Mix up your choices to be unpredictable</li>
+                                <li>Against AI: The computer uses random selection</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tutorial-video">
+                    <div class="video-placeholder">
+                        <i class="fas fa-play-circle"></i>
+                        <h4>Video Tutorial Coming Soon</h4>
+                        <p>Watch our video guide for visual instructions</p>
                     </div>
                 </div>
             </div>
-
+            
             <!-- Tic Tac Toe Tutorial -->
             <div class="tutorial-section" id="ttt-tutorial">
-                <div class="tutorial-header">
-                    <h2 class="tutorial-title">
-                        <i class="fas fa-times"></i> Tic Tac Toe
-                    </h2>
-                    <div class="tutorial-meta">
-                        <span class="meta-item">
-                            <i class="fas fa-clock"></i> 3 min read
-                        </span>
-                        <span class="meta-item">
-                            <i class="fas fa-users"></i> 2 Players
-                        </span>
-                        <span class="meta-item">
-                            <i class="fas fa-chart-line"></i> Easy
-                        </span>
+                <div class="tutorial-section-header">
+                    <h2><i class="fas fa-times"></i> Tic Tac Toe Tutorial</h2>
+                    <div class="difficulty">
+                        <span class="difficulty-label">Difficulty:</span>
+                        <span class="difficulty-level medium">Medium</span>
                     </div>
                 </div>
-
-                <div class="tutorial-body">
-                    <!-- Game Objective -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🎯 Game Objective</h3>
-                        <p>Be the first player to get three of your marks in a row (horizontally, vertically, or diagonally) on a 3x3 grid.</p>
-                        <div class="winning-patterns">
-                            <h4>Winning Patterns:</h4>
-                            <div class="patterns-grid">
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">01</div>
+                            <h3>Game Objective</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <p>Be the first to get 3 of your marks in a row on a 3x3 grid:</p>
+                            <ul>
+                                <li>Horizontally (across)</li>
+                                <li>Vertically (down)</li>
+                                <li>Diagonally (corner to corner)</li>
+                            </ul>
+                            <div class="winning-patterns">
                                 <div class="pattern">
                                     <div class="pattern-row">X X X</div>
-                                    <div class="pattern-desc">Horizontal</div>
+                                    <div class="pattern-desc">Horizontal Win</div>
                                 </div>
                                 <div class="pattern">
-                                    <div class="pattern-col">X<br>X<br>X</div>
-                                    <div class="pattern-desc">Vertical</div>
+                                    <div class="pattern-col">
+                                        <span>X</span><br>
+                                        <span>X</span><br>
+                                        <span>X</span>
+                                    </div>
+                                    <div class="pattern-desc">Vertical Win</div>
                                 </div>
                                 <div class="pattern">
-                                    <div class="pattern-diag">X<br>&nbsp;X<br>&nbsp;&nbsp;X</div>
-                                    <div class="pattern-desc">Diagonal</div>
+                                    <div class="pattern-diag">
+                                        X<br>
+                                        &nbsp; X<br>
+                                        &nbsp; &nbsp; X
+                                    </div>
+                                    <div class="pattern-desc">Diagonal Win</div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- How to Play -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🎮 How to Play</h3>
-                        <ol class="steps-list">
-                            <li>
-                                <strong>Player X goes first</strong> by clicking an empty cell
-                            </li>
-                            <li>
-                                <strong>Player O goes next</strong>, alternating turns
-                            </li>
-                            <li>
-                                <strong>Try to get 3 in a row</strong> while blocking your opponent
-                            </li>
-                            <li>
-                                <strong>Game ends</strong> when someone wins or all cells are filled
-                            </li>
-                            <li>
-                                <strong>Draw occurs</strong> if all cells are filled without a winner
-                            </li>
-                        </ol>
-                    </div>
-
-                    <!-- Strategy Tips -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🏆 Strategy Tips</h3>
-                        <div class="strategy-tips">
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-crosshairs"></i>
-                                </div>
-                                <h4>Take Center</h4>
-                                <p>The center cell gives you the most winning possibilities.</p>
-                            </div>
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-shield-alt"></i>
-                                </div>
-                                <h4>Block Opponent</h4>
-                                <p>Always check if your opponent is about to win and block them.</p>
-                            </div>
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-chess-board"></i>
-                                </div>
-                                <h4>Create Forks</h4>
-                                <p>Set up multiple winning opportunities in one move.</p>
-                            </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">02</div>
+                            <h3>Basic Strategy</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <ol>
+                                <li><strong>Take the center</strong> if available (most strategic position)</li>
+                                <li><strong>Take corners</strong> if center is taken (second best positions)</li>
+                                <li><strong>Always block</strong> your opponent's potential winning moves</li>
+                                <li><strong>Create multiple winning opportunities</strong> simultaneously</li>
+                                <li><strong>Watch for forks</strong> (positions where you can win in two ways)</li>
+                            </ol>
                         </div>
                     </div>
-
-                    <!-- Interactive Practice -->
-                    <div class="tutorial-block practice">
-                        <h3 class="block-title">🎯 Practice Board</h3>
-                        <div class="practice-board">
-                            <div class="mini-board">
-                                <div class="mini-row">
-                                    <div class="mini-cell" data-cell="0"></div>
-                                    <div class="mini-cell" data-cell="1"></div>
-                                    <div class="mini-cell" data-cell="2"></div>
-                                </div>
-                                <div class="mini-row">
-                                    <div class="mini-cell" data-cell="3"></div>
-                                    <div class="mini-cell" data-cell="4"></div>
-                                    <div class="mini-cell" data-cell="5"></div>
-                                </div>
-                                <div class="mini-row">
-                                    <div class="mini-cell" data-cell="6"></div>
-                                    <div class="mini-cell" data-cell="7"></div>
-                                    <div class="mini-cell" data-cell="8"></div>
-                                </div>
-                            </div>
-                            <div class="practice-info">
-                                <p id="practiceStatus">Player X's turn</p>
-                                <button class="btn-reset" id="resetPractice">
-                                    <i class="fas fa-redo"></i> Reset Practice
-                                </button>
-                            </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">03</div>
+                            <h3>Game Modes</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <h4>Two ways to play:</h4>
+                            <ul>
+                                <li><strong>vs AI:</strong> Play against computer with smart AI</li>
+                                <li><strong>2 Player:</strong> Local multiplayer on same device</li>
+                            </ul>
+                            
+                            <h4>AI Features:</h4>
+                            <ul>
+                                <li>Tries to win when possible</li>
+                                <li>Blocks your winning moves</li>
+                                <li>Takes strategic positions</li>
+                                <li>Adapts to your play style</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">04</div>
+                            <h3>Advanced Tips</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <ul>
+                                <li><strong>Control the center</strong> to control the game</li>
+                                <li><strong>Watch for double threats</strong> - positions that create two winning lines</li>
+                                <li><strong>Force your opponent</strong> to defend instead of attack</li>
+                                <li><strong>Practice</strong> against different difficulty levels</li>
+                                <li><strong>Remember:</strong> With perfect play, Tic Tac Toe always ends in a draw!</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
-
+            
             <!-- Memory Game Tutorial -->
             <div class="tutorial-section" id="memory-tutorial">
-                <div class="tutorial-header">
-                    <h2 class="tutorial-title">
-                        <i class="fas fa-brain"></i> Memory Match
-                    </h2>
-                    <div class="tutorial-meta">
-                        <span class="meta-item">
-                            <i class="fas fa-clock"></i> 4 min read
-                        </span>
-                        <span class="meta-item">
-                            <i class="fas fa-user"></i> 1 Player
-                        </span>
-                        <span class="meta-item">
-                            <i class="fas fa-chart-line"></i> Medium
-                        </span>
+                <div class="tutorial-section-header">
+                    <h2><i class="fas fa-brain"></i> Memory Match Tutorial</h2>
+                    <div class="difficulty">
+                        <span class="difficulty-label">Difficulty:</span>
+                        <span class="difficulty-level medium">Medium</span>
                     </div>
                 </div>
-
-                <div class="tutorial-body">
-                    <!-- Game Objective -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🎯 Game Objective</h3>
-                        <p>Find all matching pairs of cards by remembering their positions. Complete the board in the fewest moves and shortest time.</p>
-                        <div class="memory-example">
-                            <h4>Example Board (4x4):</h4>
-                            <div class="example-grid">
-                                <div class="example-card matched">A</div>
-                                <div class="example-card matched">A</div>
-                                <div class="example-card">?</div>
-                                <div class="example-card">?</div>
-                                <div class="example-card">?</div>
-                                <div class="example-card">?</div>
-                                <div class="example-card">?</div>
-                                <div class="example-card">?</div>
-                            </div>
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">01</div>
+                            <h3>Game Objective</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <p>Find all matching pairs of cards in the shortest time with the fewest moves!</p>
+                            <ul>
+                                <li>16 cards (8 pairs total)</li>
+                                <li>Fruit-themed symbols</li>
+                                <li>Track your moves and time</li>
+                                <li>Challenge yourself to improve</li>
+                            </ul>
                         </div>
                     </div>
-
-                    <!-- How to Play -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🎮 How to Play</h3>
-                        <ol class="steps-list">
-                            <li>
-                                <strong>Click Start Game</strong> to begin
-                            </li>
-                            <li>
-                                <strong>Click any card</strong> to reveal its symbol
-                            </li>
-                            <li>
-                                <strong>Click another card</strong> to find its match
-                            </li>
-                            <li>
-                                <strong>If they match</strong>, both cards stay face up
-                            </li>
-                            <li>
-                                <strong>If they don't match</strong>, both cards flip back
-                            </li>
-                            <li>
-                                <strong>Continue until</strong> all pairs are found
-                            </li>
-                        </ol>
-                    </div>
-
-                    <!-- Memory Tips -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🏆 Memory Tips</h3>
-                        <div class="strategy-tips">
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-route"></i>
-                                </div>
-                                <h4>Create Patterns</h4>
-                                <p>Remember cards by their position relative to others.</p>
-                            </div>
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-border-all"></i>
-                                </div>
-                                <h4>Grid Memory</h4>
-                                <p>Divide the board into sections and remember by section.</p>
-                            </div>
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-redo"></i>
-                                </div>
-                                <h4>Practice Makes Perfect</h4>
-                                <p>Play regularly to improve your short-term memory.</p>
-                            </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">02</div>
+                            <h3>How to Play</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <ol>
+                                <li>Click "Start Game" to begin</li>
+                                <li>Click on any card to flip it</li>
+                                <li>Click another card to find its match</li>
+                                <li>If they match, they stay flipped</li>
+                                <li>If not, they flip back after 0.5 seconds</li>
+                                <li>Find all 8 pairs to win!</li>
+                            </ol>
                         </div>
                     </div>
-
-                    <!-- Game Features -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">⚙️ Game Features</h3>
-                        <div class="difficulty-levels">
-                            <div class="level-card">
-                                <h4>Timer</h4>
-                                <p>60 seconds to complete the game</p>
-                                <span class="level-badge">Challenge</span>
-                            </div>
-                            <div class="level-card">
-                                <h4>Score System</h4>
-                                <p>10 points per matched pair</p>
-                                <span class="level-badge">Rewarding</span>
-                            </div>
-                            <div class="level-card">
-                                <h4>Move Counter</h4>
-                                <p>Track your efficiency</p>
-                                <span class="level-badge">Strategic</span>
-                            </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">03</div>
+                            <h3>Memory Techniques</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <ul>
+                                <li><strong>Create mental associations</strong> between card positions</li>
+                                <li><strong>Start from corners</strong> and work your way in</li>
+                                <li><strong>Remember patterns</strong> rather than individual cards</li>
+                                <li><strong>Take your time</strong> - rushing leads to mistakes</li>
+                                <li><strong>Practice regularly</strong> to improve your memory</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">04</div>
+                            <h3>Scoring System</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <ul>
+                                <li><strong>Moves:</strong> Each flip counts as one move</li>
+                                <li><strong>Time:</strong> Timer starts when game begins</li>
+                                <li><strong>Goal:</strong> Complete with fewest moves in shortest time</li>
+                                <li><strong>Challenge:</strong> Try to beat your personal best!</li>
+                            </ul>
+                            <p><em>Tip: A perfect game can be completed in 16 moves (8 pairs × 2 flips each)</em></p>
                         </div>
                     </div>
                 </div>
             </div>
-
+            
             <!-- Snake Game Tutorial -->
             <div class="tutorial-section" id="snake-tutorial">
-                <div class="tutorial-header">
-                    <h2 class="tutorial-title">
-                        <i class="fas fa-snake"></i> Snake Game
-                    </h2>
-                    <div class="tutorial-meta">
-                        <span class="meta-item">
-                            <i class="fas fa-clock"></i> 3 min read
-                        </span>
-                        <span class="meta-item">
-                            <i class="fas fa-user"></i> 1 Player
-                        </span>
-                        <span class="meta-item">
-                            <i class="fas fa-chart-line"></i> Challenging
-                        </span>
+                <div class="tutorial-section-header">
+                    <h2><i class="fas fa-snake"></i> Snake Game Tutorial</h2>
+                    <div class="difficulty">
+                        <span class="difficulty-label">Difficulty:</span>
+                        <span class="difficulty-level hard">Hard</span>
                     </div>
                 </div>
-
-                <div class="tutorial-body">
-                    <!-- Game Objective -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🎯 Game Objective</h3>
-                        <p>Control a snake to eat food and grow as long as possible without hitting the walls or yourself. The longer the snake, the higher your score!</p>
-                        <div class="snake-example">
-                            <h4>Game Elements:</h4>
-                            <div class="elements-grid">
-                                <div class="element">
-                                    <div class="element-icon snake-head">🐍</div>
-                                    <div class="element-desc">Snake Head</div>
-                                </div>
-                                <div class="element">
-                                    <div class="element-icon snake-body">🟢</div>
-                                    <div class="element-desc">Snake Body</div>
-                                </div>
-                                <div class="element">
-                                    <div class="element-icon food">🍎</div>
-                                    <div class="element-desc">Food</div>
-                                </div>
-                                <div class="element">
-                                    <div class="element-icon wall">🧱</div>
-                                    <div class="element-desc">Wall</div>
-                                </div>
-                            </div>
+                
+                <div class="tutorial-grid">
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">01</div>
+                            <h3>Game Objective</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <p>Control the snake to eat food and grow as long as possible without dying!</p>
+                            <ul>
+                                <li><strong>Eat food</strong> (red circle) to grow longer</li>
+                                <li><strong>Avoid walls</strong> - hitting them ends the game</li>
+                                <li><strong>Don't hit yourself</strong> - colliding with your tail ends the game</li>
+                                <li><strong>Score points</strong> - each food gives 10 points</li>
+                            </ul>
                         </div>
                     </div>
-
-                    <!-- How to Play -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🎮 How to Play</h3>
-                        <ol class="steps-list">
-                            <li>
-                                <strong>Press Space</strong> to start the game
-                            </li>
-                            <li>
-                                <strong>Use arrow keys</strong> (↑, ↓, ←, →) or WASD to control the snake
-                            </li>
-                            <li>
-                                <strong>Eat the food</strong> (🍎) to grow longer and increase score
-                            </li>
-                            <li>
-                                <strong>Avoid walls</strong> and don't crash into yourself
-                            </li>
-                            <li>
-                                <strong>Game speeds up</strong> as your score increases
-                            </li>
-                            <li>
-                                <strong>Game ends</strong> when snake crashes
-                            </li>
-                        </ol>
-                    </div>
-
-                    <!-- Controls Guide -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🎮 Controls Guide</h3>
-                        <div class="controls-guide">
-                            <div class="controls-row">
-                                <div class="control-key">
-                                    <kbd>↑</kbd> or <kbd>W</kbd>
-                                    <span>Move Up</span>
-                                </div>
-                                <div class="control-key">
-                                    <kbd>↓</kbd> or <kbd>S</kbd>
-                                    <span>Move Down</span>
-                                </div>
-                            </div>
-                            <div class="controls-row">
-                                <div class="control-key">
-                                    <kbd>←</kbd> or <kbd>A</kbd>
-                                    <span>Move Left</span>
-                                </div>
-                                <div class="control-key">
-                                    <kbd>→</kbd> or <kbd>D</kbd>
-                                    <span>Move Right</span>
-                                </div>
-                            </div>
-                            <div class="controls-row">
-                                <div class="control-key">
-                                    <kbd>Space</kbd>
-                                    <span>Pause/Resume</span>
-                                </div>
-                                <div class="control-key">
-                                    <kbd>R</kbd>
-                                    <span>Restart</span>
-                                </div>
-                            </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">02</div>
+                            <h3>Controls</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <h4>Desktop Controls:</h4>
+                            <ul>
+                                <li><strong>Arrow Keys:</strong> Up, Down, Left, Right</li>
+                                <li><strong>WASD:</strong> Alternative control scheme</li>
+                                <li><strong>Spacebar:</strong> Pause/Resume game</li>
+                            </ul>
+                            
+                            <h4>Mobile Controls:</h4>
+                            <ul>
+                                <li><strong>Touch Buttons:</strong> On-screen directional buttons</li>
+                                <li><strong>Swipe:</strong> Swipe in direction to move</li>
+                                <li><strong>Tap Pause:</strong> Use pause button</li>
+                            </ul>
                         </div>
                     </div>
-
-                    <!-- Strategy Tips -->
-                    <div class="tutorial-block">
-                        <h3 class="block-title">🏆 Strategy Tips</h3>
-                        <div class="strategy-tips">
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-expand-arrows-alt"></i>
-                                </div>
-                                <h4>Use Space</h4>
-                                <p>Stay near the center to have more room to maneuver.</p>
-                            </div>
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-route"></i>
-                                </div>
-                                <h4>Plan Your Path</h4>
-                                <p>Think a few moves ahead, especially when the snake is long.</p>
-                            </div>
-                            <div class="tip-card">
-                                <div class="tip-icon">
-                                    <i class="fas fa-tachometer-alt"></i>
-                                </div>
-                                <h4>Control Speed</h4>
-                                <p>Don't rush. Move deliberately and avoid sudden direction changes.</p>
-                            </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">03</div>
+                            <h3>Game Features</h3>
                         </div>
+                        <div class="tutorial-card-body">
+                            <ul>
+                                <li><strong>High Score System:</strong> Best score saved locally</li>
+                                <li><strong>Visual Snake:</strong> Head with eyes, gradient body</li>
+                                <li><strong>Animated Food:</strong> Glowing effect for visibility</li>
+                                <li><strong>Grid System:</strong> 20x20 grid for precise movement</li>
+                                <li><strong>Mobile Support:</strong> Touch controls and responsive design</li>
+                                <li><strong>Pause Function:</strong> Spacebar or button to pause game</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="tutorial-card">
+                        <div class="tutorial-card-header">
+                            <div class="tutorial-number">04</div>
+                            <h3>Advanced Strategies</h3>
+                        </div>
+                        <div class="tutorial-card-body">
+                            <ul>
+                                <li><strong>Plan your path:</strong> Think 2-3 moves ahead</li>
+                                <li><strong>Use the walls:</strong> Sometimes hugging walls is safer</li>
+                                <li><strong>Create space:</strong> Keep areas open for movement</li>
+                                <li><strong>Speed control:</strong> The game gets faster as you grow</li>
+                                <li><strong>Practice patterns:</strong> Learn efficient movement patterns</li>
+                                <li><strong>Stay calm:</strong> Panic leads to mistakes!</li>
+                            </ul>
+                            <p><em>Tip: Try to keep your snake in a spiral pattern for maximum control!</em></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tutorial-video">
+                    <div class="video-placeholder">
+                        <i class="fas fa-play-circle"></i>
+                        <h4>Video Tutorial Coming Soon</h4>
+                        <p>Watch our video guide for visual instructions and gameplay examples</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Coming Soon Section -->
+            <div class="tutorial-coming-soon">
+                <div class="coming-soon-content">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>More Tutorials Coming Soon!</h3>
+                    <p>We're creating detailed guides for all our games, including video tutorials, advanced strategy guides, and interactive examples.</p>
+                    <div class="coming-features">
+                        <span class="feature">Video Walkthroughs</span>
+                        <span class="feature">Strategy Videos</span>
+                        <span class="feature">Interactive Examples</span>
+                        <span class="feature">Pro Tips</span>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do I need to create an account to play?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No! GameHub is completely free and requires no registration. All games work directly in your browser with no login required.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I play on mobile devices?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! GameHub is fully responsive and works perfectly on smartphones, tablets, and desktop computers. All games have mobile-friendly controls.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Are the games really free?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! All games are 100% free with no hidden costs, ads, or in-app purchases. We believe gaming should be accessible to everyone.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do games save my progress?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Some games save high scores locally in your browser (like Snake high score), but progress resets if you clear browser data. For persistent saves, we recommend taking screenshots of your achievements!</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How does online multiplayer work?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>For Rock Paper Scissors: One player creates a room and gets a code, shares it with a friend who enters it to join. Both players make their choices and see results in real-time. No server storage - it's peer-to-peer!</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I play offline?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! All games work offline once loaded. You can save the webpage and play without internet connection. Perfect for travel or areas with poor connectivity.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Are there keyboard shortcuts?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! Each game has keyboard shortcuts:
+                            <br>- Snake: Arrow keys or WASD, Space to pause
+                            <br>- Tic Tac Toe: Number keys 1-9 for grid positions
+                            <br>- Memory: Number keys for card positions
+                            <br>- RPS: R, P, S keys for quick selection
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How can I suggest new games?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We'd love to hear your suggestions! While we don't have a formal submission system yet, you can share ideas through our social media channels or email. We're always looking for new classic games to add!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="contact-info">
+                <h3>Need More Help?</h3>
+                <p>If you have any other questions or need assistance with any of our games, feel free to reach out through our support channels.</p>
+                
+                <div class="contact-methods">
+                    <div class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <span>support@gamehub.com</span>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fab fa-twitter"></i>
+                        <span>@GameHubSupport</span>
+                    </div>
+                    <div class="contact-method">
+                        <i class="fab fa-github"></i>
+                        <span>github.com/gamehub</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
@@ -618,5 +625,6 @@
     </footer>
 
     <script src="script.js"></script>
+    <script src="tutorial.js"></script>
 </body>
 </html>
