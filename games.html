@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameHub - Play Games</title>
+    <title>GameHub - Games Collection</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="games.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,443 +36,464 @@
         </div>
     </nav>
 
-    <!-- Games Dashboard -->
-    <main class="games-dashboard">
+    <!-- Games Header -->
+    <section class="games-header">
         <div class="container">
-            <!-- Dashboard Header -->
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">
-                    <i class="fas fa-gamepad"></i> Game Dashboard
-                </h1>
-                <div class="dashboard-stats">
-                    <div class="stat-card">
-                        <i class="fas fa-trophy"></i>
-                        <div class="stat-info">
-                            <span class="stat-value" id="totalWins">0</span>
-                            <span class="stat-label">Total Wins</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-clock"></i>
-                        <div class="stat-info">
-                            <span class="stat-value" id="totalGames">0</span>
-                            <span class="stat-label">Games Played</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-chart-line"></i>
-                        <div class="stat-info">
-                            <span class="stat-value" id="winRate">0%</span>
-                            <span class="stat-label">Win Rate</span>
-                        </div>
-                    </div>
-                </div>
+            <h1 class="page-title">Game Collection</h1>
+            <p class="page-subtitle">Choose from our collection of 4 exciting games. All games work offline and require no installation!</p>
+            
+            <div class="game-filters">
+                <button class="filter-btn active" data-filter="all">All Games</button>
+                <button class="filter-btn" data-filter="multiplayer">Multiplayer</button>
+                <button class="filter-btn" data-filter="single">Single Player</button>
+                <button class="filter-btn" data-filter="classic">Classic</button>
             </div>
+        </div>
+    </section>
 
-            <!-- Multiplayer Section -->
-            <div class="multiplayer-section" id="multiplayerSection">
-                <div class="multiplayer-header">
-                    <i class="fas fa-users"></i>
-                    <h3>Multiplayer Mode</h3>
-                </div>
-                
-                <div class="room-controls">
-                    <button class="btn-room" id="createRoomBtn">
-                        <i class="fas fa-plus-circle"></i>
-                        Create Room
-                    </button>
-                    <div class="flex gap-2 w-full">
-                        <input type="text" 
-                               class="room-input" 
-                               id="joinRoomInput" 
-                               placeholder="Enter room code"
-                               maxlength="6">
-                        <button class="btn-room join" id="joinRoomBtn">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Join Room
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="room-info hidden" id="roomInfo">
-                    <div class="room-code">
-                        <i class="fas fa-door-closed"></i>
-                        <span>Room Code:</span>
-                        <span class="code-value" id="roomCodeDisplay">ABC123</span>
-                    </div>
-                    
-                    <div class="room-status" id="roomStatus">
-                        <i class="fas fa-circle"></i>
-                        <span>Status: Not Connected</span>
-                    </div>
-                    
-                    <div class="room-players" id="roomPlayers">
-                        <!-- Players will be added here -->
-                    </div>
-                </div>
-                
-                <!-- Rock Paper Scissors Multiplayer Options -->
-                <div class="rps-multiplayer-options hidden" id="rpsMultiplayerOptions">
-                    <h4 class="mt-4 mb-2">Rock Paper Scissors Multiplayer</h4>
-                    <p>Challenge a friend in real-time! Share your room code and start playing.</p>
-                </div>
-                
-                <!-- Tic Tac Toe Multiplayer Options -->
-                <div class="ttt-multiplayer-options hidden" id="tttMultiplayerOptions">
-                    <h4 class="mt-4 mb-2">Tic Tac Toe Multiplayer</h4>
-                    <p>Play against a friend in this classic strategy game.</p>
-                </div>
-            </div>
-
-            <!-- Game Selector -->
-            <div class="game-selector">
-                <div class="selector-tabs">
-                    <button class="tab-btn active" data-game="rps">
+    <!-- Games Container -->
+    <section class="games-container">
+        <div class="container">
+            <!-- Rock Paper Scissors Game -->
+            <div class="game-section" id="rps" data-category="multiplayer classic">
+                <div class="game-section-header">
+                    <div class="game-title">
                         <i class="fas fa-hand-scissors"></i>
-                        <span>Rock Paper Scissors</span>
-                    </button>
-                    <button class="tab-btn" data-game="ttt">
-                        <i class="fas fa-times"></i>
-                        <span>Tic Tac Toe</span>
-                    </button>
-                    <button class="tab-btn" data-game="memory">
-                        <i class="fas fa-brain"></i>
-                        <span>Memory Match</span>
-                    </button>
-                    <button class="tab-btn" data-game="snake">
-                        <i class="fas fa-snake"></i>
-                        <span>Snake Game</span>
-                    </button>
+                        <h2>Rock Paper Scissors</h2>
+                    </div>
+                    <span class="game-tag multiplayer">Multiplayer</span>
+                </div>
+                
+                <div class="game-content">
+                    <div class="game-info">
+                        <div class="game-description">
+                            <h3>About This Game</h3>
+                            <p>The classic hand game where rock beats scissors, scissors beats paper, and paper beats rock. Choose your weapon wisely!</p>
+                            <div class="game-instructions">
+                                <h4>How to Play:</h4>
+                                <ol>
+                                    <li>Select Rock, Paper, or Scissors</li>
+                                    <li>Computer will randomly choose its weapon</li>
+                                    <li>Winner is determined based on the rules</li>
+                                    <li>First to 5 wins the match!</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="game-stats-info">
+                            <div class="stat-card">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h4>Game Time</h4>
+                                    <p>1-3 minutes per match</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-brain"></i>
+                                <div>
+                                    <h4>Difficulty</h4>
+                                    <p>Easy</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-users"></i>
+                                <div>
+                                    <h4>Players</h4>
+                                    <p>1-2 Players</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="game-play-area">
+                        <div class="rps-game">
+                            <div class="score-board">
+                                <div class="score">
+                                    <h3 class="player1-label">Player</h3>
+                                    <div class="score-count" id="playerScore">0</div>
+                                </div>
+                                <div class="vs">
+                                    <span>VS</span>
+                                </div>
+                                <div class="score">
+                                    <h3 class="player2-label">Computer</h3>
+                                    <div class="score-count" id="computerScore">0</div>
+                                </div>
+                            </div>
+                            
+                            <div class="rps-controls">
+                                <button class="mode-btn active" data-mode="ai">
+                                    <i class="fas fa-robot"></i> vs AI
+                                </button>
+                                <button class="mode-btn" data-mode="local">
+                                    <i class="fas fa-user-friends"></i> Local Multiplayer
+                                </button>
+                                <button class="mode-btn" data-mode="online">
+                                    <i class="fas fa-wifi"></i> Online Multiplayer
+                                </button>
+                            </div>
+
+                            <div class="room-management" id="roomSection" style="display: none;">
+                                <h4>Online Multiplayer</h4>
+                                <div class="room-input-group">
+                                    <button class="btn btn-primary" id="createRoomBtn">
+                                        <i class="fas fa-plus-circle"></i> Create Room
+                                    </button>
+                                    <input type="text" class="room-input" id="roomCodeInput" placeholder="Enter room code">
+                                    <button class="btn btn-secondary" id="joinRoomBtn">
+                                        <i class="fas fa-sign-in-alt"></i> Join Room
+                                    </button>
+                                </div>
+                                <div class="room-code-display" id="roomCodeDisplay" style="display: none;"></div>
+                            </div>
+
+                            <div class="game-status" id="gameStatus">
+                                Playing against Computer
+                            </div>
+                            
+                            <div class="choices">
+                                <button class="choice-btn" data-choice="rock">
+                                    <i class="fas fa-hand-rock"></i>
+                                    <span>Rock</span>
+                                </button>
+                                <button class="choice-btn" data-choice="paper">
+                                    <i class="fas fa-hand-paper"></i>
+                                    <span>Paper</span>
+                                </button>
+                                <button class="choice-btn" data-choice="scissors">
+                                    <i class="fas fa-hand-scissors"></i>
+                                    <span>Scissors</span>
+                                </button>
+                            </div>
+                            
+                            <div class="result-area">
+                                <div class="choices-display">
+                                    <div class="player-choice">
+                                        <h4>Your Choice</h4>
+                                        <div class="choice-icon" id="playerChoiceIcon">
+                                            <i class="fas fa-question"></i>
+                                        </div>
+                                    </div>
+                                    <div class="computer-choice">
+                                        <h4>Computer's Choice</h4>
+                                        <div class="choice-icon" id="computerChoiceIcon">
+                                            <i class="fas fa-question"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="result-message" id="resultMessage">
+                                    <p>Make your move to start the game!</p>
+                                </div>
+                            </div>
+                            
+                            <div class="game-controls">
+                                <button class="btn btn-primary" id="playAgainBtn" style="display: none;">
+                                    <i class="fas fa-redo"></i> Play Again
+                                </button>
+                                <button class="btn btn-secondary" id="resetGameBtn">
+                                    <i class="fas fa-trash-alt"></i> Reset Game
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Games Container -->
-            <div class="games-container">
-                <!-- Rock Paper Scissors Game -->
-                <div class="game-section active" id="rps">
-                    <div class="game-header">
-                        <h2 class="game-title">
-                            <i class="fas fa-hand-scissors"></i> Rock Paper Scissors
-                        </h2>
-                        <div class="game-controls">
-                            <button class="control-btn" id="rpsReset">
-                                <i class="fas fa-redo"></i> Reset Game
-                            </button>
-                            <button class="control-btn" id="rpsMode">
-                                <i class="fas fa-robot"></i> vs AI
-                            </button>
-                            <button class="control-btn" id="rpsHelp">
-                                <i class="fas fa-question-circle"></i> Help
-                            </button>
-                        </div>
+            
+            <!-- Tic Tac Toe Game -->
+            <div class="game-section" id="ttt" data-category="multiplayer strategy">
+                <div class="game-section-header">
+                    <div class="game-title">
+                        <i class="fas fa-times"></i>
+                        <h2>Tic Tac Toe</h2>
                     </div>
-
-                    <div class="game-area">
-                        <div class="rps-container">
-                            <!-- Score Board -->
-                            <div class="score-board">
-                                <div class="score-player">
-                                    <div class="score-label">You</div>
-                                    <div class="score-value" id="playerScore">0</div>
-                                </div>
-                                <div class="score-vs">
-                                    <i class="fas fa-vs"></i>
-                                </div>
-                                <div class="score-opponent">
-                                    <div class="score-label" id="opponentLabel">AI</div>
-                                    <div class="score-value" id="aiScore">0</div>
-                                </div>
-                            </div>
-
-                            <!-- Game Status -->
-                            <div class="game-status">
-                                <div class="status-message" id="rpsMessage">
-                                    Choose your move!
-                                </div>
-                                <div class="round-info">
-                                    Round: <span id="roundCount">1</span>/5
-                                </div>
-                            </div>
-
-                            <!-- Choices -->
-                            <div class="choices-section">
-                                <h3>Make Your Choice</h3>
-                                <div class="choices">
-                                    <button class="choice-btn" data-choice="rock">
-                                        <div class="choice-icon">🪨</div>
-                                        <div class="choice-name">Rock</div>
-                                    </button>
-                                    <button class="choice-btn" data-choice="paper">
-                                        <div class="choice-icon">📄</div>
-                                        <div class="choice-name">Paper</div>
-                                    </button>
-                                    <button class="choice-btn" data-choice="scissors">
-                                        <div class="choice-icon">✂️</div>
-                                        <div class="choice-name">Scissors</div>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Result Display -->
-                            <div class="result-display">
-                                <div class="player-choice">
-                                    <div class="choice-label">Your Choice</div>
-                                    <div class="choice-show" id="playerChoiceDisplay">-</div>
-                                </div>
-                                <div class="vs">VS</div>
-                                <div class="ai-choice">
-                                    <div class="choice-label" id="choiceLabel">AI Choice</div>
-                                    <div class="choice-show" id="aiChoiceDisplay">-</div>
-                                </div>
-                            </div>
-
-                            <!-- Game History -->
-                            <div class="game-history">
-                                <h4>Round History</h4>
-                                <div class="history-table">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Round</th>
-                                                <th>Your Choice</th>
-                                                <th>Opponent</th>
-                                                <th>Result</th>
-                                                <th>Score</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="rpsHistoryBody">
-                                            <!-- History rows will be added here -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <span class="game-tag strategy">Strategy</span>
                 </div>
-
-                <!-- Tic Tac Toe Game -->
-                <div class="game-section" id="ttt">
-                    <div class="game-header">
-                        <h2 class="game-title">
-                            <i class="fas fa-times"></i> Tic Tac Toe
-                        </h2>
-                        <div class="game-controls">
-                            <button class="control-btn" id="tttReset">
-                                <i class="fas fa-redo"></i> New Game
-                            </button>
-                            <button class="control-btn" id="tttMode">
-                                <i class="fas fa-user-friends"></i> vs Player
-                            </button>
-                            <button class="control-btn" id="tttHelp">
-                                <i class="fas fa-question-circle"></i> Rules
-                            </button>
+                
+                <div class="game-content">
+                    <div class="game-info">
+                        <div class="game-description">
+                            <h3>About This Game</h3>
+                            <p>A classic 3x3 grid game where two players take turns marking X and O. The first to get 3 in a row wins!</p>
+                            <div class="game-instructions">
+                                <h4>How to Play:</h4>
+                                <ol>
+                                    <li>Player 1 is X, Player 2 is O</li>
+                                    <li>Take turns placing your mark on the grid</li>
+                                    <li>First to get 3 in a row (horizontal, vertical, or diagonal) wins</li>
+                                    <li>If all 9 squares are filled with no winner, it's a draw</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="game-stats-info">
+                            <div class="stat-card">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h4>Game Time</h4>
+                                    <p>2-5 minutes per match</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-brain"></i>
+                                <div>
+                                    <h4>Difficulty</h4>
+                                    <p>Medium</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-users"></i>
+                                <div>
+                                    <h4>Players</h4>
+                                    <p>1-2 Players</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="game-area">
-                        <div class="ttt-container">
-                            <!-- Game Info -->
-                            <div class="ttt-info">
+                    
+                    <div class="game-play-area">
+                        <div class="ttt-game">
+                            <div class="ttt-header">
                                 <div class="current-player">
-                                    <span class="player-label">Current Player:</span>
-                                    <span class="player-symbol" id="currentPlayer">X</span>
+                                    <h3>Current Player:</h3>
+                                    <div class="player-indicator" id="currentPlayer">X</div>
                                 </div>
                                 <div class="game-status" id="tttStatus">
-                                    Player X's turn
+                                    Game in progress
                                 </div>
                             </div>
-
-                            <!-- Game Board -->
-                            <div class="ttt-board">
-                                <div class="board-row">
-                                    <div class="board-cell" data-cell="0"></div>
-                                    <div class="board-cell" data-cell="1"></div>
-                                    <div class="board-cell" data-cell="2"></div>
+                            
+                            <div class="ttt-score-board">
+                                <div class="score-item">
+                                    <div class="score-label">Player X</div>
+                                    <div class="score-value" id="playerXScore">0</div>
                                 </div>
-                                <div class="board-row">
-                                    <div class="board-cell" data-cell="3"></div>
-                                    <div class="board-cell" data-cell="4"></div>
-                                    <div class="board-cell" data-cell="5"></div>
+                                <div class="score-item">
+                                    <div class="score-label">Player O</div>
+                                    <div class="score-value" id="playerOScore">0</div>
                                 </div>
-                                <div class="board-row">
-                                    <div class="board-cell" data-cell="6"></div>
-                                    <div class="board-cell" data-cell="7"></div>
-                                    <div class="board-cell" data-cell="8"></div>
+                                <div class="score-item">
+                                    <div class="score-label">Draws</div>
+                                    <div class="score-value" id="drawsScore">0</div>
                                 </div>
                             </div>
-
-                            <!-- Score Board -->
-                            <div class="ttt-scores">
-                                <div class="score-card">
-                                    <div class="score-symbol">X</div>
-                                    <div class="score-value" id="scoreX">0</div>
-                                    <div class="score-label">Wins</div>
-                                </div>
-                                <div class="score-card">
-                                    <div class="score-symbol">Draws</div>
-                                    <div class="score-value" id="scoreDraw">0</div>
-                                    <div class="score-label">Ties</div>
-                                </div>
-                                <div class="score-card">
-                                    <div class="score-symbol">O</div>
-                                    <div class="score-value" id="scoreO">0</div>
-                                    <div class="score-label">Wins</div>
-                                </div>
+                            
+                            <div class="ttt-board" id="tttBoard">
+                                <!-- Board will be generated by JavaScript -->
+                            </div>
+                            
+                            <div class="game-controls">
+                                <button class="btn btn-primary" id="newGameBtn">
+                                    <i class="fas fa-plus-circle"></i> New Game
+                                </button>
+                                <button class="btn btn-secondary" id="switchModeBtn">
+                                    <i class="fas fa-robot"></i> Switch to vs AI
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Memory Game -->
-                <div class="game-section" id="memory">
-                    <div class="game-header">
-                        <h2 class="game-title">
-                            <i class="fas fa-brain"></i> Memory Match
-                        </h2>
-                        <div class="game-controls">
-                            <button class="control-btn" id="memoryReset">
-                                <i class="fas fa-redo"></i> New Game
-                            </button>
-                            <button class="control-btn" id="memoryDifficulty">
-                                <i class="fas fa-sliders-h"></i> Easy
-                            </button>
-                            <button class="control-btn" id="memoryHelp">
-                                <i class="fas fa-question-circle"></i> Help
-                            </button>
+            </div>
+            
+            <!-- Snake Game -->
+            <div class="game-section" id="snake" data-category="single classic">
+                <div class="game-section-header">
+                    <div class="game-title">
+                        <i class="fas fa-snake"></i>
+                        <h2>Snake Game</h2>
+                    </div>
+                    <span class="game-tag arcade">Arcade</span>
+                </div>
+                
+                <div class="game-content">
+                    <div class="game-info">
+                        <div class="game-description">
+                            <h3>About This Game</h3>
+                            <p>The classic snake game! Control the snake to eat food and grow longer. Avoid hitting the walls or yourself!</p>
+                            <div class="game-instructions">
+                                <h4>How to Play:</h4>
+                                <ol>
+                                    <li>Use arrow keys to control the snake</li>
+                                    <li>Eat the red food to grow longer</li>
+                                    <li>Avoid hitting walls or your own tail</li>
+                                    <li>Each food gives 10 points</li>
+                                    <li>Game gets faster as you grow!</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="game-stats-info">
+                            <div class="stat-card">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h4>Game Time</h4>
+                                    <p>Unlimited</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-brain"></i>
+                                <div>
+                                    <h4>Difficulty</h4>
+                                    <p>Medium</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-user"></i>
+                                <div>
+                                    <h4>Players</h4>
+                                    <p>1 Player</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="game-area">
-                        <div class="memory-container">
-                            <!-- Game Stats -->
-                            <div class="memory-stats">
-                                <div class="stat">
-                                    <i class="fas fa-clock"></i>
-                                    <div class="stat-info">
-                                        <div class="stat-value" id="memoryTime">1:00</div>
-                                        <div class="stat-label">Time</div>
-                                    </div>
+                    
+                    <div class="game-play-area">
+                        <div class="snake-game-container">
+                            <div class="snake-stats">
+                                <div class="snake-stat">
+                                    <h4>Score</h4>
+                                    <div class="snake-score" id="snakeScore">0</div>
                                 </div>
-                                <div class="stat">
-                                    <i class="fas fa-redo"></i>
-                                    <div class="stat-info">
-                                        <div class="stat-value" id="memoryMoves">0</div>
-                                        <div class="stat-label">Moves</div>
-                                    </div>
-                                </div>
-                                <div class="stat">
-                                    <i class="fas fa-star"></i>
-                                    <div class="stat-info">
-                                        <div class="stat-value" id="memoryMatches">0</div>
-                                        <div class="stat-label">Matches</div>
-                                    </div>
+                                <div class="snake-stat">
+                                    <h4>High Score</h4>
+                                    <div class="snake-highscore" id="snakeHighScore">0</div>
                                 </div>
                             </div>
-
-                            <!-- Memory Grid -->
-                            <div class="memory-grid" id="memoryGrid">
-                                <!-- Cards will be generated by JavaScript -->
+                            
+                            <canvas id="snakeCanvas" width="400" height="400"></canvas>
+                            
+                            <div class="snake-control-buttons">
+                                <button class="snake-btn up" data-direction="up">
+                                    <i class="fas fa-arrow-up"></i>
+                                </button>
+                                <button class="snake-btn left" data-direction="left">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+                                <button class="snake-btn right" data-direction="right">
+                                    <i class="fas fa-arrow-right"></i>
+                                </button>
+                                <button class="snake-btn down" data-direction="down">
+                                    <i class="fas fa-arrow-down"></i>
+                                </button>
                             </div>
-
-                            <!-- Game Controls -->
-                            <div class="memory-controls">
-                                <button class="btn-start" id="memoryStart">
+                            
+                            <div class="snake-controls">
+                                <button class="btn btn-primary" id="snakeStartBtn">
                                     <i class="fas fa-play"></i> Start Game
                                 </button>
-                                <div class="memory-message" id="memoryMessage">
-                                    Click Start to begin!
-                                </div>
+                                <button class="btn btn-secondary" id="snakePauseBtn">
+                                    <i class="fas fa-pause"></i> Pause
+                                </button>
+                                <button class="btn btn-secondary" id="snakeResetBtn">
+                                    <i class="fas fa-redo"></i> Reset
+                                </button>
+                            </div>
+                            
+                            <div class="snake-instructions">
+                                <p><strong>Controls:</strong> Arrow Keys or WASD | <strong>Pause:</strong> Spacebar</p>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Snake Game -->
-                <div class="game-section" id="snake">
-                    <div class="game-header">
-                        <h2 class="game-title">
-                            <i class="fas fa-snake"></i> Snake Game
-                        </h2>
-                        <div class="game-controls">
-                            <button class="control-btn" id="snakeReset">
-                                <i class="fas fa-redo"></i> Restart
-                            </button>
-                            <button class="control-btn" id="snakePause">
-                                <i class="fas fa-pause"></i> Pause
-                            </button>
-                            <button class="control-btn" id="snakeHelp">
-                                <i class="fas fa-question-circle"></i> Controls
-                            </button>
+            </div>
+            
+            <!-- Memory Game -->
+            <div class="game-section" id="memory" data-category="single memory">
+                <div class="game-section-header">
+                    <div class="game-title">
+                        <i class="fas fa-brain"></i>
+                        <h2>Memory Match</h2>
+                    </div>
+                    <span class="game-tag memory">Memory</span>
+                </div>
+                
+                <div class="game-content">
+                    <div class="game-info">
+                        <div class="game-description">
+                            <h3>About This Game</h3>
+                            <p>Test your memory by matching pairs of cards. Find all matching pairs in the shortest time possible!</p>
+                            <div class="game-instructions">
+                                <h4>How to Play:</h4>
+                                <ol>
+                                    <li>Click on any card to flip it</li>
+                                    <li>Click another card to find its match</li>
+                                    <li>If they match, they stay flipped</li>
+                                    <li>If not, they flip back</li>
+                                    <li>Find all pairs to win!</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="game-stats-info">
+                            <div class="stat-card">
+                                <i class="fas fa-clock"></i>
+                                <div>
+                                    <h4>Game Time</h4>
+                                    <p>2-5 minutes</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-brain"></i>
+                                <div>
+                                    <h4>Difficulty</h4>
+                                    <p>Medium</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <i class="fas fa-user"></i>
+                                <div>
+                                    <h4>Players</h4>
+                                    <p>1 Player</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="game-area">
-                        <div class="snake-container">
-                            <!-- Game Info -->
-                            <div class="snake-info">
-                                <div class="snake-score">
-                                    <i class="fas fa-apple-alt"></i>
-                                    <div class="score-info">
-                                        <div class="score-value" id="snakeScore">0</div>
-                                        <div class="score-label">Score</div>
-                                    </div>
+                    
+                    <div class="game-play-area">
+                        <div class="memory-game-container">
+                            <div class="memory-stats">
+                                <div class="memory-stat">
+                                    <h3>Moves</h3>
+                                    <p id="memoryMoves">0</p>
                                 </div>
-                                <div class="snake-highscore">
-                                    <i class="fas fa-trophy"></i>
-                                    <div class="score-info">
-                                        <div class="score-value" id="snakeHighScore">0</div>
-                                        <div class="score-label">High Score</div>
-                                    </div>
-                                </div>
-                                <div class="snake-level">
-                                    <i class="fas fa-chart-line"></i>
-                                    <div class="score-info">
-                                        <div class="score-value" id="snakeLevel">1</div>
-                                        <div class="score-label">Level</div>
-                                    </div>
+                                <div class="memory-stat">
+                                    <h3>Time</h3>
+                                    <p id="memoryTime">00:00</p>
                                 </div>
                             </div>
-
-                            <!-- Game Board -->
-                            <div class="snake-board-container">
-                                <div class="snake-board" id="snakeBoard">
-                                    <!-- Snake board will be drawn by JavaScript -->
-                                </div>
-                                <div class="snake-controls-mobile">
-                                    <div class="control-row">
-                                        <button class="dir-btn" data-dir="up">
-                                            <i class="fas fa-arrow-up"></i>
-                                        </button>
-                                    </div>
-                                    <div class="control-row">
-                                        <button class="dir-btn" data-dir="left">
-                                            <i class="fas fa-arrow-left"></i>
-                                        </button>
-                                        <button class="dir-btn" data-dir="down">
-                                            <i class="fas fa-arrow-down"></i>
-                                        </button>
-                                        <button class="dir-btn" data-dir="right">
-                                            <i class="fas fa-arrow-right"></i>
-                                        </button>
-                                    </div>
-                                </div>
+                            
+                            <div class="memory-board" id="memoryBoard">
+                                <!-- Cards will be generated by JavaScript -->
                             </div>
-
-                            <!-- Game Status -->
-                            <div class="snake-status">
-                                <div class="status-message" id="snakeMessage">
-                                    Press Space to Start
-                                </div>
-                                <div class="controls-info">
-                                    Use <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> or WASD to control
-                                </div>
+                            
+                            <div class="memory-controls">
+                                <button class="btn btn-primary" id="memoryStartBtn">
+                                    <i class="fas fa-play"></i> Start Game
+                                </button>
+                                <button class="btn btn-secondary" id="memoryResetBtn">
+                                    <i class="fas fa-redo"></i> Reset Game
+                                </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="game-coming-soon">
+                <div class="coming-soon-content">
+                    <i class="fas fa-gamepad"></i>
+                    <h3>More Games Coming Soon!</h3>
+                    <p>We're constantly working on adding new games to our collection. Stay tuned!</p>
+                    <div class="coming-soon-games">
+                        <span class="coming-game">Sudoku</span>
+                        <span class="coming-game">2048</span>
+                        <span class="coming-game">Chess</span>
+                        <span class="coming-game">Checkers</span>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+    </section>
 
     <!-- Footer -->
     <footer class="footer">
@@ -506,5 +528,6 @@
     </footer>
 
     <script src="script.js"></script>
+    <script src="games.js"></script>
 </body>
 </html>
