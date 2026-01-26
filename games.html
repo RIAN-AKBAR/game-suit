@@ -121,6 +121,7 @@
                                 </div>
                             </div>
                             
+                            <!-- HANYA AI dan Local Multiplayer -->
                             <div class="rps-controls">
                                 <button class="mode-btn active" data-mode="ai">
                                     <i class="fas fa-robot"></i> vs AI
@@ -128,23 +129,6 @@
                                 <button class="mode-btn" data-mode="local">
                                     <i class="fas fa-user-friends"></i> Local Multiplayer
                                 </button>
-                                <button class="mode-btn" data-mode="online">
-                                    <i class="fas fa-wifi"></i> Online Multiplayer
-                                </button>
-                            </div>
-
-                            <div class="room-management" id="roomSection" style="display: none;">
-                                <h4>Online Multiplayer</h4>
-                                <div class="room-input-group">
-                                    <button class="btn btn-primary" id="createRoomBtn">
-                                        <i class="fas fa-plus-circle"></i> Create Room
-                                    </button>
-                                    <input type="text" class="room-input" id="roomCodeInput" placeholder="Enter room code">
-                                    <button class="btn btn-secondary" id="joinRoomBtn">
-                                        <i class="fas fa-sign-in-alt"></i> Join Room
-                                    </button>
-                                </div>
-                                <div class="room-code-display" id="roomCodeDisplay" style="display: none;"></div>
                             </div>
 
                             <div class="game-status" id="gameStatus">
@@ -357,6 +341,19 @@
                                 <div class="snake-stat">
                                     <h4>High Score</h4>
                                     <div class="snake-highscore" id="snakeHighScore">0</div>
+                                </div>
+                                <div class="snake-stat">
+                                    <h4>Level</h4>
+                                    <div class="snake-level" id="snakeLevel">Medium</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Level Selection -->
+                            <div class="snake-levels">
+                                <div class="level-buttons">
+                                    <button class="level-btn" data-level="easy">Easy</button>
+                                    <button class="level-btn active" data-level="medium">Medium</button>
+                                    <button class="level-btn" data-level="hard">Hard</button>
                                 </div>
                             </div>
                             
