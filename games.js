@@ -89,18 +89,16 @@ class GameManager {
     }
 }
 
-// Rock Paper Scissors Game dengan Multiplayer
+// Rock Paper Scissors Game HANYA dengan AI dan Local Multiplayer
 class RPSGame {
     constructor() {
         this.player1Score = 0;
         this.player2Score = 0;
         this.gameActive = true;
         this.currentPlayer = 1;
-        this.gameMode = 'ai'; // 'ai', 'local', 'online'
+        this.gameMode = 'ai'; // 'ai', 'local'
         this.player1Choice = null;
         this.player2Choice = null;
-        this.roomCode = null;
-        this.players = {};
         this.init();
     }
 
@@ -114,11 +112,6 @@ class RPSGame {
         this.playAgainBtn = document.getElementById('playAgainBtn');
         this.resetGameBtn = document.getElementById('resetGameBtn');
         this.modeButtons = document.querySelectorAll('.mode-btn');
-        this.roomCodeDisplay = document.getElementById('roomCodeDisplay');
-        this.roomCodeInput = document.getElementById('roomCodeInput');
-        this.joinRoomBtn = document.getElementById('joinRoomBtn');
-        this.createRoomBtn = document.getElementById('createRoomBtn');
-        this.roomSection = document.getElementById('roomSection');
         this.gameStatusDisplay = document.getElementById('gameStatus');
         this.player1Label = document.querySelector('.player1-label');
         this.player2Label = document.querySelector('.player2-label');
@@ -148,28 +141,18 @@ class RPSGame {
             this.resetGame();
         });
 
-        // Mode selection buttons
+        // Mode selection buttons (HANYA AI dan Local)
         this.modeButtons.forEach(button => {
             button.addEventListener('click', (e) => {
                 this.changeMode(e.currentTarget.dataset.mode);
             });
         });
-
-        // Room management buttons
-        if (this.createRoomBtn) {
-            this.createRoomBtn.addEventListener('click', () => {
-                this.createRoom();
-            });
-        }
-
-        if (this.joinRoomBtn) {
-            this.joinRoomBtn.addEventListener('click', () => {
-                this.joinRoom();
-            });
-        }
     }
 
     changeMode(mode) {
+        // Hanya allow 'ai' dan 'local'
+        if (mode !== 'ai' && mode !== 'local') return;
+        
         this.gameMode = mode;
         this.resetGame();
         
@@ -177,11 +160,6 @@ class RPSGame {
         this.modeButtons.forEach(btn => {
             btn.classList.toggle('active', btn.dataset.mode === mode);
         });
-
-        // Show/hide room section for online mode
-        if (this.roomSection) {
-            this.roomSection.style.display = mode === 'online' ? 'block' : 'none';
-        }
 
         // Update score labels based on mode
         if (mode === 'ai') {
@@ -195,74 +173,6 @@ class RPSGame {
         this.updateGameStatus();
     }
 
-    createRoom() {
-        // Generate random room code
-        this.roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-        
-        // Update URL with room code
-        const newUrl = window.location.origin + window.location.pathname + '?room=' + this.roomCode;
-        window.history.pushState({}, '', newUrl);
-        
-        // Display room code
-        if (this.roomCodeDisplay) {
-            this.roomCodeDisplay.textContent = `Room Code: ${this.roomCode}`;
-            this.roomCodeDisplay.style.display = 'block';
-        }
-
-        // Initialize room with player 1
-        this.players = {
-            player1: { id: 'player1', name: 'Player 1', choice: null },
-            player2: null
-        };
-
-        this.gameMode = 'online';
-        this.updateGameStatus();
-        this.showNotification('Room created! Waiting for Player 2...');
-        
-        // Simulate player 2 joining (for demo)
-        setTimeout(() => {
-            this.simulatePlayer2Join();
-        }, 2000);
-    }
-
-    simulatePlayer2Join() {
-        if (this.roomCode && !this.players.player2) {
-            this.players.player2 = { id: 'player2', name: 'Player 2', choice: null };
-            this.updateGameStatus();
-            this.showNotification('Player 2 has joined the room!');
-        }
-    }
-
-    joinRoom(code = null) {
-        const roomCode = code || this.roomCodeInput.value;
-        if (!roomCode) {
-            this.showNotification('Please enter a room code!');
-            return;
-        }
-
-        this.roomCode = roomCode.toUpperCase();
-        
-        // Update URL with room code
-        const newUrl = window.location.origin + window.location.pathname + '?room=' + this.roomCode;
-        window.history.pushState({}, '', newUrl);
-        
-        // Display room code
-        if (this.roomCodeDisplay) {
-            this.roomCodeDisplay.textContent = `Room Code: ${this.roomCode}`;
-            this.roomCodeDisplay.style.display = 'block';
-        }
-
-        // Join as player 2
-        this.players = {
-            player1: { id: 'player1', name: 'Player 1', choice: null },
-            player2: { id: 'player2', name: 'Player 2', choice: null }
-        };
-
-        this.gameMode = 'online';
-        this.updateGameStatus();
-        this.showNotification('Joined room as Player 2!');
-    }
-
     makeChoice(choice) {
         if (!this.gameActive) return;
 
@@ -270,8 +180,6 @@ class RPSGame {
             this.playAgainstAI(choice);
         } else if (this.gameMode === 'local') {
             this.playLocalMultiplayer(choice);
-        } else if (this.gameMode === 'online') {
-            this.playOnlineMultiplayer(choice);
         }
     }
 
@@ -323,57 +231,6 @@ class RPSGame {
             this.player2Choice = null;
             this.updateGameStatus();
         }
-    }
-
-    playOnlineMultiplayer(choice) {
-        const playerId = this.isPlayer1() ? 'player1' : 'player2';
-        this.players[playerId].choice = choice;
-        
-        // Update UI
-        if (playerId === 'player1') {
-            this.player1ChoiceIcon.innerHTML = this.getChoiceIcon(choice);
-        } else {
-            this.player2ChoiceIcon.innerHTML = this.getChoiceIcon(choice);
-        }
-
-        this.updateGameStatus();
-        
-        // Check if both players have chosen
-        if (this.players.player1.choice && this.players.player2.choice) {
-            setTimeout(() => {
-                this.resolveOnlineRound();
-            }, 1000);
-        } else {
-            // Disable choices while waiting
-            this.disableChoices();
-            setTimeout(() => {
-                if (this.gameActive) {
-                    this.enableChoices();
-                }
-            }, 1000);
-        }
-    }
-
-    resolveOnlineRound() {
-        const result = this.getRoundResult(
-            this.players.player1.choice,
-            this.players.player2.choice
-        );
-        
-        this.updateScores(result, 'online');
-        this.displayResult(
-            result,
-            this.players.player1.choice,
-            this.players.player2.choice
-        );
-        
-        this.checkGameEnd();
-        
-        // Reset choices for next round
-        this.players.player1.choice = null;
-        this.players.player2.choice = null;
-        this.updateGameStatus();
-        this.enableChoices();
     }
 
     getRoundResult(choice1, choice2) {
@@ -464,8 +321,6 @@ class RPSGame {
         this.currentPlayer = 1;
         this.player1Choice = null;
         this.player2Choice = null;
-        if (this.players.player1) this.players.player1.choice = null;
-        if (this.players.player2) this.players.player2.choice = null;
         
         this.player1ChoiceIcon.innerHTML = '<i class="fas fa-question"></i>';
         this.player2ChoiceIcon.innerHTML = '<i class="fas fa-question"></i>';
@@ -484,11 +339,6 @@ class RPSGame {
         this.currentPlayer = 1;
         this.player1Choice = null;
         this.player2Choice = null;
-        this.roomCode = null;
-        
-        if (this.roomCodeDisplay) {
-            this.roomCodeDisplay.style.display = 'none';
-        }
         
         this.updateScores();
         this.resetRound();
@@ -503,18 +353,6 @@ class RPSGame {
             status = 'Playing against Computer - Your turn!';
         } else if (this.gameMode === 'local') {
             status = `Player ${this.currentPlayer}'s turn`;
-        } else if (this.gameMode === 'online') {
-            if (!this.players.player2) {
-                status = 'Waiting for Player 2 to join...';
-            } else if (this.players.player1.choice && this.players.player2.choice) {
-                status = 'Both players chosen - determining winner...';
-            } else if (this.players.player1.choice) {
-                status = 'Player 1 has chosen, waiting for Player 2...';
-            } else if (this.players.player2.choice) {
-                status = 'Player 2 has chosen, waiting for Player 1...';
-            } else {
-                status = this.isPlayer1() ? 'Online - Your turn!' : 'Online - Waiting for Player 1...';
-            }
         }
         
         this.gameStatusDisplay.textContent = status;
@@ -534,12 +372,6 @@ class RPSGame {
             button.style.opacity = '1';
             button.style.cursor = 'pointer';
         });
-    }
-
-    isPlayer1() {
-        // In a real implementation, this would check server-side info
-        // For demo, we'll assume the creator is player 1
-        return !this.players.player2 || this.players.player1;
     }
 
     showNotification(message) {
@@ -851,16 +683,18 @@ class TicTacToeGame {
     }
 }
 
-// Snake Game dengan scroll prevention
+// Snake Game dengan LEVEL Difficulty (Easy, Medium, Hard)
 class SnakeGame {
     constructor() {
         this.canvas = document.getElementById('snakeCanvas');
         this.ctx = this.canvas.getContext('2d');
         this.scoreElement = document.getElementById('snakeScore');
         this.highScoreElement = document.getElementById('snakeHighScore');
+        this.levelElement = document.getElementById('snakeLevel');
         this.startBtn = document.getElementById('snakeStartBtn');
         this.pauseBtn = document.getElementById('snakePauseBtn');
         this.resetBtn = document.getElementById('snakeResetBtn');
+        this.levelBtns = document.querySelectorAll('.level-btn');
         this.controlButtons = document.querySelectorAll('.snake-btn');
         
         this.gridSize = 20;
@@ -872,6 +706,8 @@ class SnakeGame {
         this.dy = 0;
         this.score = 0;
         this.highScore = localStorage.getItem('snakeHighScore') || 0;
+        this.level = 'medium'; // 'easy', 'medium', 'hard'
+        this.speed = 150; // Initial speed in ms
         this.gameRunning = false;
         this.gameLoop = null;
         
@@ -887,6 +723,7 @@ class SnakeGame {
         
         // Update high score display
         this.highScoreElement.textContent = this.highScore;
+        this.levelElement.textContent = this.capitalize(this.level);
         
         // Draw initial state
         this.draw();
@@ -897,6 +734,14 @@ class SnakeGame {
         this.startBtn.addEventListener('click', () => this.toggleGame());
         this.pauseBtn.addEventListener('click', () => this.pauseGame());
         this.resetBtn.addEventListener('click', () => this.resetGame());
+        
+        // Level selection buttons
+        this.levelBtns.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const level = e.currentTarget.dataset.level;
+                this.changeLevel(level);
+            });
+        });
         
         // Control buttons for mobile
         this.controlButtons.forEach(button => {
@@ -919,6 +764,37 @@ class SnakeGame {
             
             this.handleKeyPress(e.key);
         });
+    }
+
+    changeLevel(level) {
+        this.level = level;
+        this.levelElement.textContent = this.capitalize(this.level);
+        
+        // Update level buttons
+        this.levelBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.level === level);
+        });
+        
+        // Set speed based on level
+        switch(level) {
+            case 'easy':
+                this.speed = 200; // Slow
+                break;
+            case 'medium':
+                this.speed = 150; // Normal
+                break;
+            case 'hard':
+                this.speed = 100; // Fast
+                break;
+        }
+        
+        // Restart game loop if game is running
+        if (this.gameRunning) {
+            clearInterval(this.gameLoop);
+            this.gameLoop = setInterval(() => this.update(), this.speed);
+        }
+        
+        this.showNotification(`Level changed to ${this.capitalize(level)}!`);
     }
 
     handleKeyPress(key) {
@@ -1045,8 +921,8 @@ class SnakeGame {
         this.startBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
         this.pauseBtn.disabled = false;
         
-        // Start game loop
-        this.gameLoop = setInterval(() => this.update(), 150);
+        // Start game loop with current speed
+        this.gameLoop = setInterval(() => this.update(), this.speed);
     }
 
     pauseGame() {
@@ -1085,8 +961,12 @@ class SnakeGame {
         
         // Check food collision
         if (head.x === this.food.x && head.y === this.food.y) {
-            // Increase score
-            this.score += 10;
+            // Increase score based on level
+            let points = 10;
+            if (this.level === 'easy') points = 5;
+            if (this.level === 'hard') points = 15;
+            
+            this.score += points;
             this.scoreElement.textContent = this.score;
             
             // Update high score
@@ -1098,6 +978,17 @@ class SnakeGame {
             
             // Generate new food
             this.generateFood();
+            
+            // Increase speed slightly based on level (hard mode gets faster faster)
+            if (this.level === 'hard' && this.score % 50 === 0) {
+                this.speed = Math.max(50, this.speed - 10);
+                clearInterval(this.gameLoop);
+                this.gameLoop = setInterval(() => this.update(), this.speed);
+            } else if (this.level === 'medium' && this.score % 100 === 0) {
+                this.speed = Math.max(80, this.speed - 10);
+                clearInterval(this.gameLoop);
+                this.gameLoop = setInterval(() => this.update(), this.speed);
+            }
         } else {
             // Remove tail if no food eaten
             this.snake.pop();
@@ -1149,7 +1040,7 @@ class SnakeGame {
             this.ctx.stroke();
         }
         
-        // Draw snake
+        // Draw snake with color based on level
         this.snake.forEach((segment, index) => {
             // Gradient for snake (head is brighter)
             const gradient = this.ctx.createLinearGradient(
@@ -1159,14 +1050,31 @@ class SnakeGame {
                 (segment.y + 1) * this.gridSize
             );
             
+            // Different colors based on level
+            let headColor, bodyColor;
+            switch(this.level) {
+                case 'easy':
+                    headColor = '#00b894'; // Green
+                    bodyColor = '#00a085';
+                    break;
+                case 'medium':
+                    headColor = '#6c5ce7'; // Purple
+                    bodyColor = '#5b4bd8';
+                    break;
+                case 'hard':
+                    headColor = '#fd79a8'; // Pink
+                    bodyColor = '#ec6897';
+                    break;
+            }
+            
             if (index === 0) {
                 // Head
-                gradient.addColorStop(0, '#00b894');
-                gradient.addColorStop(1, '#00a085');
+                gradient.addColorStop(0, headColor);
+                gradient.addColorStop(1, bodyColor);
             } else {
                 // Body
-                gradient.addColorStop(0, '#00a085');
-                gradient.addColorStop(1, '#008b74');
+                gradient.addColorStop(0, bodyColor);
+                gradient.addColorStop(1, this.darkenColor(bodyColor, 20));
             }
             
             this.ctx.fillStyle = gradient;
@@ -1254,6 +1162,34 @@ class SnakeGame {
             Math.PI * 2
         );
         this.ctx.fill();
+        
+        // Draw level indicator on canvas
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+        this.ctx.font = 'bold 14px Orbitron';
+        this.ctx.textAlign = 'left';
+        this.ctx.fillText(`LEVEL: ${this.level.toUpperCase()}`, 10, 20);
+        this.ctx.fillText(`SPEED: ${this.getSpeedText()}`, 10, 40);
+    }
+
+    getSpeedText() {
+        switch(this.level) {
+            case 'easy': return 'SLOW';
+            case 'medium': return 'NORMAL';
+            case 'hard': return 'FAST';
+            default: return 'NORMAL';
+        }
+    }
+
+    darkenColor(color, percent) {
+        // Helper function to darken a color
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) - amt;
+        const G = (num >> 8 & 0x00FF) - amt;
+        const B = (num & 0x0000FF) - amt;
+        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
     }
 
     gameOver() {
@@ -1275,7 +1211,46 @@ class SnakeGame {
         
         this.ctx.font = '20px Poppins';
         this.ctx.fillText(`Score: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 20);
-        this.ctx.fillText(`High Score: ${this.highScore}`, this.canvas.width / 2, this.canvas.height / 2 + 50);
+        this.ctx.fillText(`Level: ${this.capitalize(this.level)}`, this.canvas.width / 2, this.canvas.height / 2 + 50);
+        this.ctx.fillText(`High Score: ${this.highScore}`, this.canvas.width / 2, this.canvas.height / 2 + 80);
+    }
+
+    showNotification(message) {
+        // Remove existing notifications
+        const existingNotifications = document.querySelectorAll('.notification');
+        existingNotifications.forEach(n => n.remove());
+        
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.textContent = message;
+        notification.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--gradient);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            max-width: 300px;
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 }
 
